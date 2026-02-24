@@ -11,5 +11,3 @@ export default class ListView extends BaseComponent {
     return getContent();
   }
 }
-
-// Надо как-то связать список и элементы списка

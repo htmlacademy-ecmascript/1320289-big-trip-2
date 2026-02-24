@@ -3,7 +3,6 @@ import { render } from '../render';
 import SortPresenter from './sort-presenter';
 import ItemView from '../view/events/item-view';
 import ListView from '../view/events/list-view';
-import OfferView from '../view/events/offer-view';
 import FormView from '../view/form/form-view';
 
 export default class ContentPresenter {
@@ -23,17 +22,7 @@ export default class ContentPresenter {
     render(new FormView(), this.listElement);
 
     items.forEach((item) => {
-      const itemTemplate = new ItemView(item);
-
-      render(itemTemplate, this.listElement);
-
-      const offersContainer = itemTemplate
-        .getElement()
-        .querySelector('.event__selected-offers');
-
-      item.events.forEach((event) => {
-        render(new OfferView(event), offersContainer);
-      });
+      render(new ItemView(item), this.listElement);
     });
   }
 }
