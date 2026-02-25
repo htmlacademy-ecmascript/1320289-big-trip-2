@@ -60,8 +60,23 @@ const offersList = [
       },
       {
         id: 2,
-        title: 'Switch to comfort',
-        price: 80,
+        title: 'Switch to comfort class',
+        price: 100,
+      },
+      {
+        id: 3,
+        title: 'Add meal',
+        price: 15,
+      },
+      {
+        id: 4,
+        title: 'Choose seats',
+        price: 5,
+      },
+      {
+        id: 5,
+        title: 'Travel by train',
+        price: 40,
       },
     ],
   },
@@ -126,4 +141,29 @@ const items = [
   },
 ];
 
-export { items, offersList };
+const destinations = [
+  { destination: 'Amsterdam' },
+  { destination: 'Geneva' },
+  { destination: 'Chamonix' },
+];
+
+const destination = [
+  {
+    id: 1,
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi, enim!',
+    name: 'Chamonix',
+    pictures: [
+      {
+        src: 'img/photos/5.jpg',
+        description: 'Lorem ipsum dolor sit.',
+      },
+      {
+        src: 'img/photos/3.jpg',
+        description: 'Lorem ipsum dolor sit.',
+      },
+    ],
+  },
+];
+
+export { items, offersList, destinations, destination };

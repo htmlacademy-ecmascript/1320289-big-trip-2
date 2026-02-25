@@ -11,15 +11,17 @@ const getItemTitle = (type, destination) => {
 };
 
 export default class ContentPresenter {
-  constructor({ contentNode, itemModel }) {
+  constructor({ contentNode, itemModel, formModel }) {
     this.contentNode = contentNode;
     this.itemModel = itemModel;
+    this.formModel = formModel;
   }
 
   list = new ListView();
   listElement = this.list.getElement();
 
   init() {
+    const data = this.formModel.getFormDataById();
     this.items = [...this.itemModel.getItems()];
 
     this.sortPresenter = new SortPresenter(this.contentNode);
@@ -27,7 +29,7 @@ export default class ContentPresenter {
     this.sortPresenter.init();
 
     render(this.list, this.contentNode);
-    render(new FormView(), this.listElement);
+    render(new FormView(data), this.listElement);
 
     this.items.forEach((item) => {
       item.title = getItemTitle(item.type, item.destination);

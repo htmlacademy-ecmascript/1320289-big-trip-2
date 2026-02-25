@@ -52,4 +52,4 @@ const POINT_TYPES = [
   'restaurant',
 ];
 
-export { SORTS, FILTERS };
+export { SORTS, FILTERS, POINT_TYPES };
