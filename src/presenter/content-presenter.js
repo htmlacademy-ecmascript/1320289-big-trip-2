@@ -4,7 +4,7 @@ import ItemView from '../view/events/item-view';
 import ListView from '../view/events/list-view';
 import FormView from '../view/form/form-view';
 
-const getItemTitle = (type, destination) => {
+const getItemTitle = ({ type, destination }) => {
   return `${type} ${destination}`.replace(/\b\w/g, (char) =>
     char.toUpperCase(),
   );
@@ -32,7 +32,10 @@ export default class ContentPresenter {
     render(new FormView(data), this.listElement);
 
     this.items.forEach((item) => {
-      item.title = getItemTitle(item.type, item.destination);
+      item.title = getItemTitle({
+        type: item.type,
+        destination: item.destination,
+      });
       render(new ItemView(item), this.listElement);
     });
   }

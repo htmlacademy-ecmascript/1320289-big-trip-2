@@ -25,7 +25,7 @@ const getOfferTemplate = ({ title, price }) => {
   `;
 };
 
-const getPhotoTemplate = (src, description) => `
+const getPhotoTemplate = ({ src, description }) => `
   <img class="event__photo" src="${src}" alt="${description}">
 `;
 
@@ -47,7 +47,9 @@ const getContent = ({ types, destinations, offers, description, pictures }) => {
     .join('');
 
   const photosTemplate = pictures
-    .map((picture) => getPhotoTemplate(picture.src, picture.description))
+    .map((picture) =>
+      getPhotoTemplate({ src: picture.src, description: picture.description }),
+    )
     .join('');
 
   return `
@@ -124,10 +126,10 @@ const getContent = ({ types, destinations, offers, description, pictures }) => {
 };
 
 export default class FormView extends BaseComponent {
-  constructor({ types = [], destinations = [], offers = [], details = {} }) {
+  constructor({ types, destinations, offers, details }) {
     super();
 
-    const { description = '', pictures = [] } = details;
+    const { description, pictures } = details;
 
     this.destinations = destinations;
     this.types = types;
