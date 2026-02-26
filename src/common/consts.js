@@ -1,3 +1,5 @@
+import { destinations } from '../mock/data';
+
 const SORTS = [
   {
     name: 'day',
@@ -61,6 +63,17 @@ const TIME = {
 const FORMAT_TIME = {
   MD: 'MMM DD',
   H: 'HH:mm',
+  FULL: 'MM/DD/YY HH:mm',
 };
 
-export { SORTS, FILTERS, POINT_TYPES, TIME, FORMAT_TIME };
+const NEW_POINT = {
+  basePrice: 0,
+  dateFrom: new Date().toISOString(),
+  dateTo: new Date().toISOString(),
+  destinations: 0,
+  isFavorite: false,
+  offers: [],
+  type: POINT_TYPES[0],
+};
+
+export { SORTS, FILTERS, POINT_TYPES, TIME, FORMAT_TIME, NEW_POINT };

@@ -1,4 +1,4 @@
-import { POINT_TYPES } from '../common/consts';
+import { NEW_POINT, POINT_TYPES } from '../common/consts';
 import { destinations, items, offersList } from '../mock/data';
 
 export default class PointsModel {
@@ -7,6 +7,7 @@ export default class PointsModel {
     this.destinations = [];
     this.offers = [];
     this.points = [];
+    this.newPoint = {};
   }
 
   init() {
@@ -14,6 +15,7 @@ export default class PointsModel {
     this.destinations = destinations;
     this.offers = offersList;
     this.points = items;
+    this.newPoint = NEW_POINT;
   }
 
   getPoints() {
@@ -22,6 +24,10 @@ export default class PointsModel {
 
   getPointById(id) {
     return this.points.find((point) => point.id === id);
+  }
+
+  getNewPoint() {
+    return this.newPoint;
   }
 
   getTypes() {
@@ -51,22 +57,4 @@ export default class PointsModel {
   getDestinationById(id) {
     return this.getDestinations().find((dest) => dest.id === id);
   }
-
-  // getFormDataById() {
-  //   return {
-  //     types: this.types,
-  //     offers: this.offers,
-  //     destinations: this.destinations,
-  //     details: this.details,
-  //   };
-  // }
-
-  // getEmptyFormData() {
-  //   return {
-  //     types: this.types,
-  //     offers: this.offers,
-  //     destinations: [],
-  //     details: [],
-  //   };
-  // }
 }

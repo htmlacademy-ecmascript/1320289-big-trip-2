@@ -14,7 +14,7 @@ export default class ContentPresenter {
   listElement = this.list.getElement();
 
   init() {
-    this.currentPointId = 1;
+    this.currentPointId = 2;
     this.currentPoint = this.pointsModel.getPointById(this.currentPointId);
     this.points = [...this.pointsModel.getPoints()];
 
@@ -22,6 +22,8 @@ export default class ContentPresenter {
     this.sortPresenter.init();
 
     render(this.list, this.contentNode);
+
+    // Edit
     render(
       new FormView({
         types: this.pointsModel.getTypes(),
@@ -37,6 +39,19 @@ export default class ContentPresenter {
         details: this.pointsModel.getDestinationById(
           this.currentPoint.destination,
         ),
+      }),
+      this.listElement,
+    );
+
+    // Create
+    render(
+      new FormView({
+        types: this.pointsModel.getTypes(),
+        point: this.pointsModel.getNewPoint(),
+        offers: this.pointsModel.getOffersByType(
+          this.pointsModel.getNewPoint().type,
+        ),
+        destinations: this.pointsModel.getDestinations(),
       }),
       this.listElement,
     );

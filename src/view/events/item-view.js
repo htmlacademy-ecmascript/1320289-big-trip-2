@@ -14,8 +14,6 @@ const getContent = ({ point, offers, destination }) => {
   const { type, dateFrom, dateTo, isFavorite, basePrice } = point;
   const { name } = destination;
 
-  console.log(offers);
-
   const offersTemplate = offers
     .map((offer) => getOfferTemplate(offer))
     .join('');

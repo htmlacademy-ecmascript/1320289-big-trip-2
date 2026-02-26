@@ -1,4 +1,6 @@
 import BaseComponent from '../../common/base-component';
+import { FORMAT_TIME } from '../../common/consts';
+import { getDateInFormat } from '../../common/helpers';
 
 const getEventTypeTemplate = (type, curentType) => {
   const isChecked = type === curentType ? 'checked' : '';
@@ -16,7 +18,7 @@ const getDestinationTemplate = (destination) => `
 
 const getOfferTemplate = (offer, checkedOffers) => {
   const { id, price, title } = offer;
-  const isChecked = checkedOffers.map((offer) => offer.id).includes(id)
+  const isChecked = checkedOffers?.map((offer) => offer.id).includes(id)
     ? 'checked'
     : '';
 
@@ -53,6 +55,10 @@ const getPictureTemplate = ({ src, description }) => `
 `;
 
 const getDestinationInfoTemplate = ({ pictures, description }) => {
+  if (!pictures && !description) {
+    return '';
+  }
+
   return `
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -60,7 +66,7 @@ const getDestinationInfoTemplate = ({ pictures, description }) => {
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
-          ${pictures.map((picture) => getPictureTemplate({ src: picture.src, description: picture.description })).join('')}
+          ${pictures?.map((picture) => getPictureTemplate({ src: picture.src, description: picture.description })).join('')}
         </div>
       </div>
     </section>
@@ -73,10 +79,10 @@ const getContent = ({
   destinations,
   offers,
   checkedOffers,
-  details,
+  details = {},
 }) => {
   const { type, dateFrom, dateTo, basePrice } = point;
-  const { name } = details;
+  const { name = '' } = details;
 
   const typesTemplate = types
     .map((type) => getEventTypeTemplate(type, point.type))
@@ -86,7 +92,6 @@ const getContent = ({
     .map((destination) => getDestinationTemplate(destination))
     .join('');
 
-  console.log(offers);
   const offersListTemplate = getOffersListTemplate(offers, checkedOffers);
 
   const destinationInfoTemplate = getDestinationInfoTemplate(details);
@@ -122,10 +127,10 @@ const getContent = ({
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateInFormat(dateFrom, FORMAT_TIME.FULL)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateInFormat(dateTo, FORMAT_TIME.FULL)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
