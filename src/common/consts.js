@@ -1,5 +1,3 @@
-import { destinations } from '../mock/data';
-
 const SORTS = [
   {
     name: 'day',

@@ -12,13 +12,12 @@ const getEventTypeTemplate = (type, curentType) => {
     </div>`;
 };
 
-const getDestinationTemplate = (destination) => `
-    <option value="${destination}"></option>
-  `;
+const getDestinationTemplate = (destination) =>
+  `<option value="${destination}"></option>`;
 
 const getOfferTemplate = (offer, checkedOffers) => {
   const { id, price, title } = offer;
-  const isChecked = checkedOffers?.map((offer) => offer.id).includes(id)
+  const isChecked = checkedOffers?.map((item) => item.id).includes(id)
     ? 'checked'
     : '';
 
@@ -85,7 +84,7 @@ const getContent = ({
   const { name = '' } = details;
 
   const typesTemplate = types
-    .map((type) => getEventTypeTemplate(type, point.type))
+    .map((item) => getEventTypeTemplate(item, point.type))
     .join('');
 
   const destinationsDemplate = destinations
