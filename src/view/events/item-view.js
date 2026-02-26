@@ -1,5 +1,6 @@
 import BaseComponent from '../../common/base-component';
-import { offersList } from '../../mock/items';
+import { FORMAT_TIME } from '../../common/consts';
+import { getDateInFormat, getDiffInTime } from '../../common/helpers';
 
 const getOfferTemplate = ({ title, price }) => `
   <li class="event__offer">
@@ -9,21 +10,13 @@ const getOfferTemplate = ({ title, price }) => `
   </li>
 `;
 
-const getContent = ({
-  date,
-  title,
-  type,
-  startTime,
-  endTime,
-  duration,
-  price,
-  offers,
-  isFavorite,
-}) => {
-  const currentOffers = offersList.find((offer) => offer.type === type);
+const getContent = ({ point, offers, destination }) => {
+  const { type, dateFrom, dateTo, isFavorite, basePrice } = point;
+  const { name } = destination;
 
-  const offersTemplate = currentOffers.offers
-    .filter((offer) => offers.includes(offer.id))
+  console.log(offers);
+
+  const offersTemplate = offers
     .map((offer) => getOfferTemplate(offer))
     .join('');
 
@@ -32,25 +25,25 @@ const getContent = ({
   return `
     <li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="2019-03-18">${date}</time>
+        <time class="event__date" datetime="${dateFrom}">${getDateInFormat(dateFrom, FORMAT_TIME.MD)}</time>
 
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
 
-        <h3 class="event__title">${title}</h3>
+        <h3 class="event__title">${type} ${name}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">${startTime}</time>
+            <time class="event__start-time" datetime="${dateFrom}">${getDateInFormat(dateFrom, FORMAT_TIME.H)}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">${endTime}</time>
+            <time class="event__end-time" datetime="${dateTo}">${getDateInFormat(dateTo, FORMAT_TIME.H)}</time>
           </p>
-          <p class="event__duration">${duration}</p>
+          <p class="event__duration">${getDiffInTime(dateFrom, dateTo)}</p>
         </div>
 
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${price}</span>
+          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
 
         <h4 class="visually-hidden">Offers:</h4>
@@ -74,12 +67,18 @@ const getContent = ({
 };
 
 export default class ItemView extends BaseComponent {
-  constructor(item) {
+  constructor({ point, offers, destination }) {
     super();
-    this.item = item;
+    this.point = point;
+    this.offers = offers;
+    this.destination = destination;
   }
 
   getTemplate() {
-    return getContent(this.item);
+    return getContent({
+      point: this.point,
+      offers: this.offers,
+      destination: this.destination,
+    });
   }
 }

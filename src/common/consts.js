@@ -52,4 +52,15 @@ const POINT_TYPES = [
   'restaurant',
 ];
 
-export { SORTS, FILTERS, POINT_TYPES };
+const TIME = {
+  MS_IN_MIN: 6e4,
+  SEC_IN_MIN: 6e1,
+  HRS_IN_DAY: 24,
+};
+
+const FORMAT_TIME = {
+  MD: 'MMM DD',
+  H: 'HH:mm',
+};
+
+export { SORTS, FILTERS, POINT_TYPES, TIME, FORMAT_TIME };

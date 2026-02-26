@@ -4,39 +4,52 @@ import ItemView from '../view/events/item-view';
 import ListView from '../view/events/list-view';
 import FormView from '../view/form/form-view';
 
-const getItemTitle = ({ type, destination }) => {
-  return `${type} ${destination}`.replace(/\b\w/g, (char) =>
-    char.toUpperCase(),
-  );
-};
-
 export default class ContentPresenter {
-  constructor({ contentNode, itemModel, formModel }) {
+  constructor({ contentNode, pointsModel }) {
     this.contentNode = contentNode;
-    this.itemModel = itemModel;
-    this.formModel = formModel;
+    this.pointsModel = pointsModel;
   }
 
   list = new ListView();
   listElement = this.list.getElement();
 
   init() {
-    this.data = this.formModel.getFormDataById();
-    this.items = [...this.itemModel.getItems()];
+    this.currentPointId = 1;
+    this.currentPoint = this.pointsModel.getPointById(this.currentPointId);
+    this.points = [...this.pointsModel.getPoints()];
 
     this.sortPresenter = new SortPresenter(this.contentNode);
-
     this.sortPresenter.init();
 
     render(this.list, this.contentNode);
-    render(new FormView(this.data), this.listElement);
+    render(
+      new FormView({
+        types: this.pointsModel.getTypes(),
+        point: this.pointsModel.getPointById(this.currentPointId),
+        offers: this.pointsModel.getOffersByType(this.currentPoint.type),
+        checkedOffers: [
+          ...this.pointsModel.getOffersById(
+            this.currentPoint.type,
+            this.currentPoint.offers,
+          ),
+        ],
+        destinations: this.pointsModel.getDestinations(),
+        details: this.pointsModel.getDestinationById(
+          this.currentPoint.destination,
+        ),
+      }),
+      this.listElement,
+    );
 
-    this.items.forEach((item) => {
-      item.title = getItemTitle({
-        type: item.type,
-        destination: item.destination,
-      });
-      render(new ItemView(item), this.listElement);
+    this.points.forEach((point) => {
+      render(
+        new ItemView({
+          point: point,
+          offers: this.pointsModel.getOffersById(point.type, point.offers),
+          destination: this.pointsModel.getDestinationById(point.destination),
+        }),
+        this.listElement,
+      );
     });
   }
 }
