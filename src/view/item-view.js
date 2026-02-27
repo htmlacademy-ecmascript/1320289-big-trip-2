@@ -1,6 +1,6 @@
-import BaseComponent from '../../common/base-component';
-import { FORMAT_TIME } from '../../common/consts';
-import { getDateInFormat, getDiffInTime } from '../../common/helpers';
+import BaseComponent from '../common/base-component';
+import { FORMAT_TIME } from '../common/consts';
+import { getDateInFormat, getDiffInTime } from '../common/helpers';
 
 const getOfferTemplate = ({ title, price }) => `
   <li class="event__offer">

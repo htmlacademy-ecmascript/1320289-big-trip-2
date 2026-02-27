@@ -1,5 +1,5 @@
-import BaseComponent from '../../common/base-component';
-import { FILTERS } from '../../common/consts';
+import { FILTERS } from '../common/consts';
+import BaseComponent from '../common/base-component';
 
 const getFilterTemplate = ({ name, checked }) => {
   const isChecked = checked ? 'checked' : '';

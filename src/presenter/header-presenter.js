@@ -1,6 +1,6 @@
 import { render, RenderPosition } from '../render';
-import FiltersView from '../view/header/filters-view';
-import InfoView from '../view/header/info-view';
+import FiltersView from '../view/filters-view';
+import InfoView from '../view/info-view';
 
 export default class HeaderPresenter {
   constructor(contentNode) {

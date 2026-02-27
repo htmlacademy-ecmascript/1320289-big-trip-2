@@ -1,8 +1,10 @@
 import { render } from '../render';
 import SortPresenter from './sort-presenter';
-import ItemView from '../view/events/item-view';
-import ListView from '../view/events/list-view';
-import FormView from '../view/form/form-view';
+import ItemView from '../view/item-view';
+import ListView from '../view/list-view';
+import FormView from '../view/form-view';
+import SortView from '../view/sort';
+import { SORTS } from '../common/consts';
 
 export default class ContentPresenter {
   constructor({ contentNode, pointsModel }) {
@@ -20,6 +22,8 @@ export default class ContentPresenter {
 
     this.sortPresenter = new SortPresenter(this.contentNode);
     this.sortPresenter.init();
+
+    render(new SortView(SORTS), this.contentNode);
 
     render(this.list, this.contentNode);
 

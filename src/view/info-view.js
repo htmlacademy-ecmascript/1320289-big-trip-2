@@ -1,4 +1,4 @@
-import BaseComponent from '../../common/base-component';
+import BaseComponent from '../common/base-component';
 
 const getContent = ({ title, description, cost }) => `
   <section class="trip-main__trip-info trip-info">

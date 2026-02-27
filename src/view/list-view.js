@@ -1,4 +1,4 @@
-import BaseComponent from '../../common/base-component';
+import BaseComponent from '../common/base-component';
 
 const getContent = () => '<ul class="trip-events__list"><ul>';
 

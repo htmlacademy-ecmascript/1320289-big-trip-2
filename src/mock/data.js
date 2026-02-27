@@ -1,43 +1,5 @@
-// const item = [
-//   {
-//     id: 'f4b62099-293f-4c3d-a702-94eec4a2808c',
-//     basePrice: 1100,
-//     dateFrom: '2019-07-10T22:55:56.845Z',
-//     dateTo: '2019-07-11T11:22:13.375Z',
-//     destination: 'bfa5cb75-a1fe-4b77-a83c-0e528e910e04',
-//     isFavorite: false,
-//     offers: ['b4c3e4e6-9053-42ce-b747-e281314baa31'],
-//     type: 'taxi',
-//   },
-// ];
-
-// const destination = [
-//   {
-//     id: 1,
-//     description:
-//       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi, enim!',
-//     name: 'Chamonix',
-//     pictures: [
-//       {
-//         src: '',
-//         description: 'Lorem ipsum dolor sit.',
-//       },
-//     ],
-//   },
-// ];
-
-// const offer = [
-//   {
-//     type: 'taxi',
-//     offers: [
-//       {
-//         id: 1,
-//         title: 'Upgrade to a business class',
-//         price: '120',
-//       },
-//     ],
-//   },
-// ];
+import { POINT_TYPES } from '../common/consts';
+import { getRandomArrayElement } from '../common/helpers';
 
 const offersList = [
   {
@@ -106,7 +68,7 @@ const items = [
     destination: 1,
     isFavorite: false,
     offers: [1],
-    type: 'taxi',
+    type: getRandomArrayElement(POINT_TYPES),
   },
   {
     id: 2,
@@ -116,7 +78,7 @@ const items = [
     destination: 2,
     isFavorite: false,
     offers: [1, 2],
-    type: 'flight',
+    type: getRandomArrayElement(POINT_TYPES),
   },
   {
     id: 3,
@@ -126,7 +88,7 @@ const items = [
     destination: 3,
     isFavorite: false,
     offers: [1],
-    type: 'drive',
+    type: getRandomArrayElement(POINT_TYPES),
   },
   {
     id: 4,
@@ -136,7 +98,7 @@ const items = [
     destination: 3,
     isFavorite: true,
     offers: [1],
-    type: 'drive',
+    type: getRandomArrayElement(POINT_TYPES),
   },
 ];
 

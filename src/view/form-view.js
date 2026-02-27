@@ -1,6 +1,6 @@
-import BaseComponent from '../../common/base-component';
-import { FORMAT_TIME } from '../../common/consts';
-import { getDateInFormat } from '../../common/helpers';
+import BaseComponent from '../common/base-component';
+import { FORMAT_TIME } from '../common/consts';
+import { getDateInFormat } from '../common/helpers';
 
 const getEventTypeTemplate = (type, curentType) => {
   const isChecked = type === curentType ? 'checked' : '';
