@@ -1,13 +1,9 @@
-import BaseComponent from '../common/base-component';
+import AbstractView from '../framework/view/abstract-view';
 
-const getContent = () => '<ul class="trip-events__list"><ul>';
+const getContentTemplate = () => '<ul class="trip-events__list"><ul>';
 
-export default class ListView extends BaseComponent {
-  constructor() {
-    super();
-  }
-
-  getTemplate() {
-    return getContent();
+export default class ListView extends AbstractView {
+  get template() {
+    return getContentTemplate();
   }
 }

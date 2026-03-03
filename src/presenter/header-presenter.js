@@ -1,10 +1,12 @@
-import { render, RenderPosition } from '../render';
+import { render, RenderPosition } from '../framework/render';
 import FiltersView from '../view/filters-view';
 import InfoView from '../view/info-view';
 
 export default class HeaderPresenter {
+  #contentNode = null;
+
   constructor(contentNode) {
-    this.contentNode = contentNode;
+    this.#contentNode = contentNode;
   }
 
   init() {
@@ -14,10 +16,10 @@ export default class HeaderPresenter {
         description: '18&nbsp;&mdash;&nbsp;20 Mar',
         cost: '1230',
       }),
-      this.contentNode,
+      this.#contentNode,
       RenderPosition.AFTERBEGIN,
     );
 
-    render(new FiltersView(), this.contentNode);
+    render(new FiltersView(), this.#contentNode);
   }
 }

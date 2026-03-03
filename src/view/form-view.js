@@ -1,6 +1,6 @@
-import BaseComponent from '../common/base-component';
 import { FORMAT_TIME } from '../common/consts';
 import { getDateInFormat } from '../common/helpers';
+import AbstractView from '../framework/view/abstract-view';
 
 const getEventTypeTemplate = (type, curentType) => {
   const isChecked = type === curentType ? 'checked' : '';
@@ -72,7 +72,7 @@ const getDestinationInfoTemplate = ({ pictures, description }) => {
   `;
 };
 
-const getContent = ({
+const getContentTemplate = ({
   types,
   point,
   destinations,
@@ -152,26 +152,33 @@ const getContent = ({
 `;
 };
 
-export default class FormView extends BaseComponent {
+export default class FormView extends AbstractView {
+  #destinations = null;
+  #types = null;
+  #point = null;
+  #offers = null;
+  #checkedOffers = null;
+  #details = null;
+
   constructor({ types, point, destinations, offers, checkedOffers, details }) {
     super();
 
-    this.destinations = destinations;
-    this.types = types;
-    this.point = point;
-    this.offers = offers;
-    this.checkedOffers = checkedOffers;
-    this.details = details;
+    this.#destinations = destinations;
+    this.#types = types;
+    this.#point = point;
+    this.#offers = offers;
+    this.#checkedOffers = checkedOffers;
+    this.#details = details;
   }
 
-  getTemplate() {
-    return getContent({
-      types: this.types,
-      point: this.point,
-      destinations: this.destinations,
-      offers: this.offers,
-      checkedOffers: this.checkedOffers,
-      details: this.details,
+  get template() {
+    return getContentTemplate({
+      types: this.#types,
+      point: this.#point,
+      destinations: this.#destinations,
+      offers: this.#offers,
+      checkedOffers: this.#checkedOffers,
+      details: this.#details,
     });
   }
 }

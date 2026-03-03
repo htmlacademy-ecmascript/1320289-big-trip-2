@@ -13,6 +13,51 @@ const offersList = [
     ],
   },
   {
+    type: 'bus',
+    offers: [
+      {
+        id: 1,
+        title: 'Order Uber',
+        price: 20,
+      },
+    ],
+  },
+  {
+    type: 'train',
+    offers: [
+      {
+        id: 1,
+        title: 'Order Uber',
+        price: 20,
+      },
+    ],
+  },
+  {
+    type: 'ship',
+    offers: [
+      {
+        id: 1,
+        title: 'Order Uber',
+        price: 20,
+      },
+    ],
+  },
+  {
+    type: 'drive',
+    offers: [
+      {
+        id: 1,
+        title: 'Rent a car',
+        price: 200,
+      },
+      {
+        id: 2,
+        title: 'Rent a car',
+        price: 80,
+      },
+    ],
+  },
+  {
     type: 'flight',
     offers: [
       {
@@ -43,17 +88,32 @@ const offersList = [
     ],
   },
   {
-    type: 'drive',
+    type: 'check-in',
     offers: [
       {
         id: 1,
-        title: 'Rent a car',
-        price: 200,
+        title: 'Order Uber',
+        price: 20,
       },
+    ],
+  },
+  {
+    type: 'sightseeing',
+    offers: [
       {
-        id: 2,
-        title: 'Rent a car',
-        price: 80,
+        id: 1,
+        title: 'Order Uber',
+        price: 20,
+      },
+    ],
+  },
+  {
+    type: 'restaurant',
+    offers: [
+      {
+        id: 1,
+        title: 'Order Uber',
+        price: 20,
       },
     ],
   },

@@ -2,44 +2,46 @@ import { NEW_POINT, POINT_TYPES } from '../common/consts';
 import { destinations, items, offersList } from '../mock/data';
 
 export default class PointsModel {
-  constructor() {
-    this.types = [];
-    this.destinations = [];
-    this.offers = [];
-    this.points = [];
-    this.newPoint = {};
-  }
+  #types = [];
+  #destinations = [];
+  #offers = [];
+  #points = [];
+  #newPoint = {};
 
   init() {
-    this.types = POINT_TYPES;
-    this.destinations = destinations;
-    this.offers = offersList;
-    this.points = items;
-    this.newPoint = NEW_POINT;
+    this.#types = POINT_TYPES;
+    this.#destinations = destinations;
+    this.#offers = offersList;
+    this.#points = items;
+    this.#newPoint = NEW_POINT;
   }
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
+  }
+
+  get newPoint() {
+    return this.#newPoint;
+  }
+
+  get types() {
+    return this.#types;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
+  get destinations() {
+    return this.#destinations;
   }
 
   getPointById(id) {
-    return this.points.find((point) => point.id === id);
-  }
-
-  getNewPoint() {
-    return this.newPoint;
-  }
-
-  getTypes() {
-    return this.types;
-  }
-
-  getOffers() {
-    return this.offers;
+    return this.#points.find((point) => point.id === id);
   }
 
   getOffersByType(type) {
-    return this.offers.find((offer) => offer.type === type).offers;
+    return this.#offers.find((offer) => offer.type === type).offers;
   }
 
   getOffersById(type, targetIds) {
@@ -50,11 +52,7 @@ export default class PointsModel {
     );
   }
 
-  getDestinations() {
-    return this.destinations;
-  }
-
   getDestinationById(id) {
-    return this.getDestinations().find((dest) => dest.id === id);
+    return this.#destinations.find((dest) => dest.id === id);
   }
 }

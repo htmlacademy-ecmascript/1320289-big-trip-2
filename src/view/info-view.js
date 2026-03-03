@@ -1,6 +1,6 @@
-import BaseComponent from '../common/base-component';
+import AbstractView from '../framework/view/abstract-view';
 
-const getContent = ({ title, description, cost }) => `
+const getContentTemplate = ({ title, description, cost }) => `
   <section class="trip-main__trip-info trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${title}</h1>
@@ -12,19 +12,23 @@ const getContent = ({ title, description, cost }) => `
   </section>
 `;
 
-export default class InfoView extends BaseComponent {
+export default class InfoView extends AbstractView {
+  #title = null;
+  #description = null;
+  #cost = null;
+
   constructor({ title, description, cost }) {
     super();
-    this.title = title;
-    this.description = description;
-    this.cost = cost;
+    this.#title = title;
+    this.#description = description;
+    this.#cost = cost;
   }
 
-  getTemplate() {
-    return getContent({
-      title: this.title,
-      description: this.description,
-      cost: this.cost,
+  get template() {
+    return getContentTemplate({
+      title: this.#title,
+      description: this.#description,
+      cost: this.#cost,
     });
   }
 }
