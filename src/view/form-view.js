@@ -159,8 +159,19 @@ export default class FormView extends AbstractView {
   #offers = null;
   #checkedOffers = null;
   #details = null;
+  #handleFormSubmit = null;
+  #handleFormDecline = null;
 
-  constructor({ types, point, destinations, offers, checkedOffers, details }) {
+  constructor({
+    types,
+    point,
+    destinations,
+    offers,
+    checkedOffers,
+    details,
+    onFormSubmit,
+    onFormDecline,
+  }) {
     super();
 
     this.#destinations = destinations;
@@ -169,6 +180,16 @@ export default class FormView extends AbstractView {
     this.#offers = offers;
     this.#checkedOffers = checkedOffers;
     this.#details = details;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleFormDecline = onFormDecline;
+
+    this.element
+      .querySelector('.event__save-btn')
+      .addEventListener('click', this.#submitFormHandler);
+
+    this.element
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this.#declineFormHandler);
   }
 
   get template() {
@@ -181,4 +202,14 @@ export default class FormView extends AbstractView {
       details: this.#details,
     });
   }
+
+  #submitFormHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #declineFormHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormDecline();
+  };
 }

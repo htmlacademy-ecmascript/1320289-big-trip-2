@@ -3,17 +3,16 @@ import ListView from '../view/list-view';
 import FormView from '../view/form-view';
 import SortView from '../view/sort';
 import { SORTS } from '../common/consts';
-import { render } from '../framework/render';
+import { render, replace } from '../framework/render';
 
 export default class ContentPresenter {
   #contentNode = null;
   #pointsModel = null;
-  #currentPoint = null;
   #points = null;
+  #currentOpenForm = null;
 
   #list = new ListView();
   #listElement = this.#list.element;
-  #currentPointId = 2;
 
   constructor({ contentNode, pointsModel }) {
     this.#contentNode = contentNode;
@@ -21,32 +20,10 @@ export default class ContentPresenter {
   }
 
   init() {
-    this.#currentPoint = this.#pointsModel.getPointById(this.#currentPointId);
     this.#points = [...this.#pointsModel.points];
 
     render(new SortView(SORTS), this.#contentNode);
-
     render(this.#list, this.#contentNode);
-
-    // Edit
-    render(
-      new FormView({
-        types: this.#pointsModel.types,
-        point: this.#pointsModel.getPointById(this.#currentPointId),
-        offers: this.#pointsModel.getOffersByType(this.#currentPoint.type),
-        checkedOffers: [
-          ...this.#pointsModel.getOffersById(
-            this.#currentPoint.type,
-            this.#currentPoint.offers,
-          ),
-        ],
-        destinations: this.#pointsModel.destinations,
-        details: this.#pointsModel.getDestinationById(
-          this.#currentPoint.destination,
-        ),
-      }),
-      this.#listElement,
-    );
 
     // Create
     render(
@@ -61,15 +38,75 @@ export default class ContentPresenter {
       this.#listElement,
     );
 
-    this.#points.forEach((point) => {
-      render(
-        new ItemView({
-          point: point,
-          offers: this.#pointsModel.getOffersById(point.type, point.offers),
-          destination: this.#pointsModel.getDestinationById(point.destination),
-        }),
-        this.#listElement,
-      );
+    this.#points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderPoint(point) {
+    let pointConponent = null;
+    let formConponent = null;
+
+    const escKeydownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        this.#closeForm({ pointConponent, formConponent, escKeydownHandler });
+        document.removeEventListener('keydown', escKeydownHandler);
+      }
+    };
+
+    const offers = this.#pointsModel.getOffersById(point.type, point.offers);
+    const destination = this.#pointsModel.getDestinationById(point.destination);
+
+    pointConponent = new ItemView({
+      point,
+      offers: offers,
+      destination: destination,
+      onEditClick: () => {
+        this.#openForm({ pointConponent, formConponent, escKeydownHandler });
+      },
     });
+
+    formConponent = new FormView({
+      point: point,
+      types: this.#pointsModel.types,
+      offers: this.#pointsModel.getOffersByType(point.type),
+      checkedOffers: offers,
+      destinations: this.#pointsModel.destinations,
+      details: destination,
+      onFormSubmit: () => {
+        this.#closeForm({ pointConponent, formConponent, escKeydownHandler });
+      },
+      onFormDecline: () => {
+        this.#closeForm({ pointConponent, formConponent, escKeydownHandler });
+      },
+    });
+
+    render(pointConponent, this.#listElement);
+  }
+
+  #closeCurrentForm() {
+    if (this.#currentOpenForm) {
+      this.#currentOpenForm.close();
+      this.#currentOpenForm = null;
+    }
+  }
+
+  #openForm({ formConponent, pointConponent, escKeydownHandler }) {
+    this.#closeCurrentForm();
+
+    replace(formConponent, pointConponent);
+    document.addEventListener('keydown', escKeydownHandler);
+
+    this.#currentOpenForm = {
+      close: () => {
+        replace(pointConponent, formConponent);
+        document.removeEventListener('keydown', escKeydownHandler);
+      },
+    };
+  }
+
+  #closeForm({ pointConponent, formConponent, escKeydownHandler }) {
+    replace(pointConponent, formConponent);
+    document.removeEventListener('keydown', escKeydownHandler);
+    this.#currentOpenForm = null;
   }
 }

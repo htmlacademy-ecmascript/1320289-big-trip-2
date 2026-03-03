@@ -127,8 +127,8 @@ const items = [
     dateTo: '2019-07-11T11:22:13.375Z',
     destination: 1,
     isFavorite: false,
-    offers: [1],
-    type: getRandomArrayElement(POINT_TYPES),
+    offers: [1, 2],
+    type: POINT_TYPES[5],
   },
   {
     id: 2,
