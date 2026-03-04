@@ -1,15 +1,21 @@
+import { generateFilters } from '../common/sort';
 import { render, RenderPosition } from '../framework/render';
 import FiltersView from '../view/filters-view';
 import InfoView from '../view/info-view';
 
 export default class HeaderPresenter {
   #contentNode = null;
+  #pointsModel = null;
+  #filters = null;
 
-  constructor(contentNode) {
+  constructor({ contentNode, pointsModel }) {
     this.#contentNode = contentNode;
+    this.#pointsModel = pointsModel;
   }
 
   init() {
+    this.#filters = generateFilters(this.#pointsModel.points);
+
     render(
       new InfoView({
         title: 'Amsterdam &mdash; Chamonix &mdash; Geneva',
@@ -20,6 +26,6 @@ export default class HeaderPresenter {
       RenderPosition.AFTERBEGIN,
     );
 
-    render(new FiltersView(), this.#contentNode);
+    render(new FiltersView({ filters: this.#filters }), this.#contentNode);
   }
 }

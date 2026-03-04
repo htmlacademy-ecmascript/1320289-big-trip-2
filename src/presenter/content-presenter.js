@@ -1,15 +1,16 @@
 import ItemView from '../view/item-view';
 import ListView from '../view/list-view';
 import FormView from '../view/form-view';
-import SortView from '../view/sort';
-import { SORTS } from '../common/consts';
+import SortView from '../view/sort-view';
 import { render, replace } from '../framework/render';
+import { generateSorts } from '../common/sort';
 
 export default class ContentPresenter {
   #contentNode = null;
   #pointsModel = null;
   #points = null;
   #currentOpenForm = null;
+  #sorts = null;
 
   #list = new ListView();
   #listElement = this.#list.element;
@@ -20,15 +21,15 @@ export default class ContentPresenter {
   }
 
   init() {
+    this.#sorts = generateSorts(this.#pointsModel.points);
     this.#points = [...this.#pointsModel.points];
 
-    render(new SortView(SORTS), this.#contentNode);
+    render(new SortView(this.#sorts), this.#contentNode);
     render(this.#list, this.#contentNode);
 
     // Create
     render(
       new FormView({
-        types: this.#pointsModel.types,
         point: this.#pointsModel.newPoint,
         offers: this.#pointsModel.getOffersByType(
           this.#pointsModel.newPoint.type,

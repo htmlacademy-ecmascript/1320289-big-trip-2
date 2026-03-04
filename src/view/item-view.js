@@ -1,5 +1,5 @@
 import { FORMAT_TIME } from '../common/consts';
-import { getDateInFormat, getDiffInTime } from '../common/helpers';
+import { getDateInFormat, getDiffInTime } from '../common/date';
 import AbstractView from '../framework/view/abstract-view';
 
 const getOfferTemplate = ({ title, price }) => `

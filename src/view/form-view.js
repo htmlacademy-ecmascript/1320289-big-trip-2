@@ -1,5 +1,5 @@
-import { FORMAT_TIME } from '../common/consts';
-import { getDateInFormat } from '../common/helpers';
+import { FORMAT_TIME, POINT_TYPES } from '../common/consts';
+import { getDateInFormat } from '../common/date';
 import AbstractView from '../framework/view/abstract-view';
 
 const getEventTypeTemplate = (type, curentType) => {
@@ -73,7 +73,6 @@ const getDestinationInfoTemplate = ({ pictures, description }) => {
 };
 
 const getContentTemplate = ({
-  types,
   point,
   destinations,
   offers,
@@ -83,9 +82,9 @@ const getContentTemplate = ({
   const { type, dateFrom, dateTo, basePrice } = point;
   const { name = '' } = details;
 
-  const typesTemplate = types
-    .map((item) => getEventTypeTemplate(item, point.type))
-    .join('');
+  const typesTemplate = POINT_TYPES.map((item) =>
+    getEventTypeTemplate(item, point.type),
+  ).join('');
 
   const destinationsDemplate = destinations
     .map((destination) => getDestinationTemplate(destination))
@@ -154,7 +153,6 @@ const getContentTemplate = ({
 
 export default class FormView extends AbstractView {
   #destinations = null;
-  #types = null;
   #point = null;
   #offers = null;
   #checkedOffers = null;
@@ -163,7 +161,6 @@ export default class FormView extends AbstractView {
   #handleFormDecline = null;
 
   constructor({
-    types,
     point,
     destinations,
     offers,
@@ -175,7 +172,6 @@ export default class FormView extends AbstractView {
     super();
 
     this.#destinations = destinations;
-    this.#types = types;
     this.#point = point;
     this.#offers = offers;
     this.#checkedOffers = checkedOffers;
@@ -194,7 +190,6 @@ export default class FormView extends AbstractView {
 
   get template() {
     return getContentTemplate({
-      types: this.#types,
       point: this.#point,
       destinations: this.#destinations,
       offers: this.#offers,

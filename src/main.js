@@ -8,7 +8,10 @@ const eventsNode = document.querySelector('.trip-events');
 const pointsModel = new PointsModel();
 pointsModel.init();
 
-const headerPresenter = new HeaderPresenter(headerContentNode);
+const headerPresenter = new HeaderPresenter({
+  contentNode: headerContentNode,
+  pointsModel,
+});
 const contentPresenter = new ContentPresenter({
   contentNode: eventsNode,
   pointsModel,
