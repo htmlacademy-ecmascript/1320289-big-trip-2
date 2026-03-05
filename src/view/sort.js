@@ -1,4 +1,4 @@
-import BaseComponent from '../common/base-component';
+import AbstractView from '../framework/view/abstract-view';
 
 const getSortItems = ({ name, disabled }) => `
   <div class="trip-sort__item  trip-sort__item--${name}">
@@ -7,7 +7,7 @@ const getSortItems = ({ name, disabled }) => `
   </div>
 `;
 
-const getContent = (sorts) => {
+const getContentTemplate = (sorts) => {
   const sortsTemplate = sorts.map((sort) => getSortItems(sort)).join('');
 
   return `<form class="trip-events__trip-sort trip-sort" action="#" method="get">
@@ -15,13 +15,15 @@ const getContent = (sorts) => {
     </form>`;
 };
 
-export default class SortView extends BaseComponent {
+export default class SortView extends AbstractView {
+  #sorts = null;
+
   constructor(sorts) {
     super();
-    this.sorts = sorts;
+    this.#sorts = sorts;
   }
 
-  getTemplate() {
-    return getContent(this.sorts);
+  get template() {
+    return getContentTemplate(this.#sorts);
   }
 }

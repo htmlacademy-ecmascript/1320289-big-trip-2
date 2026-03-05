@@ -1,5 +1,5 @@
-import BaseComponent from '../../common/base-component';
-import { FILTERS } from '../../common/consts';
+import { FILTERS } from '../common/consts';
+import AbstractView from '../framework/view/abstract-view';
 
 const getFilterTemplate = ({ name, checked }) => {
   const isChecked = checked ? 'checked' : '';
@@ -12,7 +12,7 @@ const getFilterTemplate = ({ name, checked }) => {
   `;
 };
 
-const getContent = () => {
+const getContentTemplate = () => {
   const filtersTemplate = FILTERS.map((filter) =>
     getFilterTemplate(filter),
   ).join('');
@@ -25,12 +25,8 @@ const getContent = () => {
   `;
 };
 
-export default class FiltersView extends BaseComponent {
-  constructor() {
-    super();
-  }
-
-  getTemplate() {
-    return getContent();
+export default class FiltersView extends AbstractView {
+  get template() {
+    return getContentTemplate();
   }
 }

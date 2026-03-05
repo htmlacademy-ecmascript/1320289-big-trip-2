@@ -1,6 +1,6 @@
-import BaseComponent from '../../common/base-component';
-import { FORMAT_TIME } from '../../common/consts';
-import { getDateInFormat, getDiffInTime } from '../../common/helpers';
+import { FORMAT_TIME } from '../common/consts';
+import { getDateInFormat, getDiffInTime } from '../common/helpers';
+import AbstractView from '../framework/view/abstract-view';
 
 const getOfferTemplate = ({ title, price }) => `
   <li class="event__offer">
@@ -10,7 +10,7 @@ const getOfferTemplate = ({ title, price }) => `
   </li>
 `;
 
-const getContent = ({ point, offers, destination }) => {
+const getContentTemplate = ({ point, offers, destination }) => {
   const { type, dateFrom, dateTo, isFavorite, basePrice } = point;
   const { name } = destination;
 
@@ -64,19 +64,38 @@ const getContent = ({ point, offers, destination }) => {
   `;
 };
 
-export default class ItemView extends BaseComponent {
-  constructor({ point, offers, destination }) {
+export default class ItemView extends AbstractView {
+  #point = null;
+  #offers = null;
+  #destination = null;
+  #handleEditClick = null;
+
+  constructor({ point, offers, destination, onEditClick }) {
     super();
-    this.point = point;
-    this.offers = offers;
-    this.destination = destination;
+    this.#point = point;
+    this.#offers = offers;
+    this.#destination = destination;
+    this.#handleEditClick = onEditClick;
+
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
-  getTemplate() {
-    return getContent({
-      point: this.point,
-      offers: this.offers,
-      destination: this.destination,
+  get template() {
+    return getContentTemplate({
+      point: this.#point,
+      offers: this.#offers,
+      destination: this.#destination,
     });
   }
+
+  get id() {
+    return this.#point.id;
+  }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }

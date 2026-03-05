@@ -1,16 +1,18 @@
-import BaseComponent from '../common/base-component';
+import AbstractView from '../framework/view/abstract-view';
 
-const getContent = (message) => `
+const getContentTemplate = (message) => `
   <p class="trip-events__msg">${message}</p>
 `;
 
-export default class HintView extends BaseComponent {
+export default class HintView extends AbstractView {
+  #message = null;
+
   constructor(message) {
     super();
-    this.message = message;
+    this.#message = message;
   }
 
-  getTemplate() {
-    return getContent(this.message);
+  get template() {
+    return getContentTemplate(this.#message);
   }
 }
