@@ -17,8 +17,8 @@ export default class HeaderPresenter {
     this.#pointsModel = pointsModel;
     this.#appState = appState;
 
-    this.#appState.subscribe((state) => {
-      this.#handleStateChange(state);
+    this.#appState.subscribe((state, updateType, restData) => {
+      this.#handleStateChange(state, updateType, restData);
     });
   }
 

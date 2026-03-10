@@ -4,18 +4,18 @@ import { destinations, items, offersList } from '../mock/data';
 export default class PointsModel {
   #destinations = [];
   #offers = [];
-  #points = [];
   #newPoint = {};
+  #points;
 
   init() {
     this.#destinations = destinations;
     this.#offers = offersList;
-    this.#points = items;
     this.#newPoint = NEW_POINT;
+    this.#points = new Map(items.map((item) => [item.id, item]));
   }
 
   get points() {
-    return this.#points;
+    return Array.from(this.#points.values());
   }
 
   get newPoint() {
@@ -31,7 +31,7 @@ export default class PointsModel {
   }
 
   getPointById(id) {
-    return this.#points.find((point) => point.id === id);
+    return this.#points.get(id);
   }
 
   getOffersByType(type) {
@@ -48,5 +48,21 @@ export default class PointsModel {
 
   getDestinationById(id) {
     return this.#destinations.find((dest) => dest.id === id);
+  }
+
+  updatePoint(point) {
+    if (this.#points.has(point.id)) {
+      this.#points.set(point.id, point);
+    }
+  }
+
+  addPoint(point) {
+    this.#points.set(point.id, point);
+  }
+
+  removePoint(point) {
+    if (this.#points.has(point.id)) {
+      this.#points.delete(point.id);
+    }
   }
 }

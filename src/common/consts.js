@@ -56,6 +56,11 @@ const HintTexts = {
   dataLoadError: 'Failed to load latest route information',
 };
 
+const UpdateTypes = {
+  FullChange: 'FULL_CHANGE',
+  SinglePointUpdate: 'SINGLE_POINT_UPDATE',
+};
+
 export {
   POINT_TYPES,
   TIME,
@@ -64,4 +69,5 @@ export {
   SortTypes,
   FilterTypes,
   HintTexts,
+  UpdateTypes,
 };

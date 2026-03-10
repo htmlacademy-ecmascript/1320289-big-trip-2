@@ -1,6 +1,5 @@
-import { render, replace } from '../framework/render';
+import { replace } from '../framework/render';
 import FormView from '../view/form-view';
-import HintView from '../view/hint-view';
 import PointView from '../view/point-view';
 
 export default class PointManager {
@@ -12,22 +11,16 @@ export default class PointManager {
   }
 
   createPointView(pointData, callbacks) {
-    const { onEditClick, onFavoriteClick } = callbacks;
-
     return new PointView({
       pointData,
-      onEditClick,
-      onFavoriteClick,
+      callbacks,
     });
   }
 
   createFormView(formData, callbacks) {
-    const { onFormSubmit, onFormDecline } = callbacks;
-
     return new FormView({
       formData,
-      onFormSubmit,
-      onFormDecline,
+      callbacks,
     });
   }
 
@@ -56,10 +49,5 @@ export default class PointManager {
       this.#currentOpenForm.close();
       this.#currentOpenForm = null;
     }
-  }
-
-  renderHint(message, container) {
-    container.innerHTML = '';
-    render(new HintView({ message }), container);
   }
 }
