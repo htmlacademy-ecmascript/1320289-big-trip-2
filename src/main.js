@@ -1,15 +1,19 @@
 import PointsModel from './model/points-model';
 import ContentPresenter from './presenter/content-presenter';
 import HeaderPresenter from './presenter/header-presenter';
-import PointService from './services/point-service';
-import AppState from './state/app-state';
+import PointService from './service/point-service';
+import AppState from './model/app-state';
+import PointManager from './manager/point-manager';
+import KeyboardManager from './manager/keyboard-manager';
 
 const headerContentNode = document.querySelector('.trip-main');
 const eventsNode = document.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
-
 const appState = new AppState();
+
+const keyboardManager = new KeyboardManager();
+const pointManager = new PointManager(keyboardManager);
 
 appState.isLoading = true;
 
@@ -30,6 +34,7 @@ const contentPresenter = new ContentPresenter({
   pointsModel,
   appState,
   pointService,
+  pointManager,
 });
 
 headerPresenter.init();
