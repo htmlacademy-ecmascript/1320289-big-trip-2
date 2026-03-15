@@ -1,30 +1,30 @@
-import { FilterTypes, SortTypes } from '../common/consts';
+import { FilterTypes, SortTypes, UpdateTypes } from '../common/consts';
 
 export default class AppState {
   #isLoading = true;
-  #points = [];
   #currentFilter = FilterTypes.EVERYTHING;
   #currentSort = SortTypes.DAY;
   #observers = [];
+  #points;
 
   set isLoading(isLoading) {
     this.#isLoading = isLoading;
-    this.#notify();
+    this.#notify(UpdateTypes.FullChange);
   }
 
   set points(points) {
-    this.#points = points;
-    this.#notify();
+    this.#points = new Map(points.map((point) => [point.id, point]));
+    this.#notify(UpdateTypes.FullChange);
   }
 
   set currentFilter(filter) {
     this.#currentFilter = filter;
-    this.#notify();
+    this.#notify(UpdateTypes.FullChange);
   }
 
   set currentSort(sort) {
     this.#currentSort = sort;
-    this.#notify();
+    this.#notify(UpdateTypes.FullChange);
   }
 
   get isLoading() {
@@ -32,7 +32,7 @@ export default class AppState {
   }
 
   get points() {
-    return this.#points;
+    return Array.from(this.#points.values());
   }
 
   get currentFilter() {
@@ -46,7 +46,7 @@ export default class AppState {
   get state() {
     return {
       isLoading: this.#isLoading,
-      points: [...this.#points],
+      points: this.points,
       currentFilter: this.#currentFilter,
       currentSort: this.#currentSort,
     };
@@ -56,7 +56,16 @@ export default class AppState {
     this.#observers.push(observer);
   }
 
-  #notify() {
-    this.#observers.forEach((observer) => observer(this.state));
+  #notify(updateType = UpdateTypes.FullChange, restData = {}) {
+    this.#observers.forEach((observer) =>
+      observer(this.state, updateType, restData),
+    );
+  }
+
+  updatePoint(point) {
+    if (this.#points.get(point.id)) {
+      this.#points.set(point.id, point);
+      this.#notify(UpdateTypes.SinglePointUpdate, { pointId: point.id });
+    }
   }
 }

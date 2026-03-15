@@ -1,31 +1,34 @@
-import PointView from '../view/point-view';
 import ListView from '../view/list-view';
-import FormView from '../view/form-view';
 import SortView from '../view/sort-view';
-import { render, replace } from '../framework/render';
+import { render } from '../framework/render';
 import { generateSorts } from '../common/sort';
-import { onEscKeydown } from '../common/utils';
+import { HintTexts, UpdateTypes } from '../common/consts';
+import PointPresenter from './point-presenter';
 import HintView from '../view/hint-view';
-import { HintTexts } from '../common/consts';
 
 export default class ContentPresenter {
   #contentNode = null;
   #pointsModel = null;
   #appState = null;
   #pointService = null;
-  #currentOpenForm = null;
+  #pointManager = null;
+  #pointComponents = new Map();
 
   #list = new ListView();
   #listElement = this.#list.element;
 
-  constructor({ contentNode, pointsModel, appState, pointService }) {
+  constructor(data) {
+    const { contentNode, pointsModel, appState, pointService, pointManager } =
+      data;
+
     this.#contentNode = contentNode;
     this.#pointsModel = pointsModel;
     this.#appState = appState;
     this.#pointService = pointService;
+    this.#pointManager = pointManager;
 
-    this.#appState.subscribe((state) => {
-      this.#handleStateChange(state);
+    this.#appState.subscribe((state, updateType, restData) => {
+      this.#handleStateChange(state, updateType, restData);
     });
   }
 
@@ -33,7 +36,13 @@ export default class ContentPresenter {
     this.#handleStateChange(this.#appState.state);
   }
 
-  #handleStateChange(state) {
+  #handleStateChange(state, updateType, restData) {
+    if (updateType === UpdateTypes.SinglePointUpdate) {
+      const { pointId } = restData;
+      this.#updatePoint(pointId);
+      return;
+    }
+
     this.#contentNode.innerHTML = '';
 
     this.#renderContent(state);
@@ -41,16 +50,18 @@ export default class ContentPresenter {
 
   #renderContent({ points, isLoading }) {
     if (isLoading) {
-      render(new HintView({ message: HintTexts.loading }), this.#contentNode);
+      this.#renderHint(HintTexts.loading, this.#contentNode);
       return;
     }
 
     if (points.length === 0) {
-      render(new HintView({ message: HintTexts.listEmpty }), this.#contentNode);
+      this.#renderHint(HintTexts.listEmpty, this.#contentNode);
       return;
     }
 
-    const sorts = generateSorts(this.#pointsModel.points);
+    this.#pointComponents.clear();
+
+    const sorts = generateSorts(points);
 
     render(new SortView(sorts), this.#contentNode);
     render(this.#list, this.#contentNode);
@@ -58,62 +69,45 @@ export default class ContentPresenter {
   }
 
   #renderPoint(point) {
-    let pointComponent = null;
-    let formComponent = null;
-
-    const pointData = this.#pointService.getPointData(point);
-    const formData = this.#pointService.getFormData(point);
-
-    const escKeydownHandler = (evt) =>
-      onEscKeydown(evt, () => {
-        this.#closeForm({ pointComponent, formComponent, escKeydownHandler });
-        document.removeEventListener('keydown', escKeydownHandler);
-      });
-
-    pointComponent = new PointView({
-      pointData,
-      onEditClick: () => {
-        this.#openForm({ pointComponent, formComponent, escKeydownHandler });
-      },
+    const pointPresenter = new PointPresenter({
+      container: this.#listElement,
+      callbacks: this.#createPointCallbacks(point),
+      pointService: this.#pointService,
+      pointManager: this.#pointManager,
     });
 
-    formComponent = new FormView({
-      formData,
-      onFormSubmit: () => {
-        this.#closeForm({ pointComponent, formComponent, escKeydownHandler });
-      },
-      onFormDecline: () => {
-        this.#closeForm({ pointComponent, formComponent, escKeydownHandler });
-      },
-    });
-
-    render(pointComponent, this.#listElement);
+    pointPresenter.init(point);
+    this.#pointComponents.set(point.id, pointPresenter);
   }
 
-  #closeCurrentForm() {
-    if (this.#currentOpenForm) {
-      this.#currentOpenForm.close();
-      this.#currentOpenForm = null;
-    }
-  }
-
-  #openForm({ formComponent, pointComponent, escKeydownHandler }) {
-    this.#closeCurrentForm();
-
-    replace(formComponent, pointComponent);
-    document.addEventListener('keydown', escKeydownHandler);
-
-    this.#currentOpenForm = {
-      close: () => {
-        replace(pointComponent, formComponent);
-        document.removeEventListener('keydown', escKeydownHandler);
+  #createPointCallbacks(point) {
+    return {
+      onFavoriteClick: () => {
+        point.isFavorite = !point.isFavorite;
+        this.#pointsModel.updatePoint(point);
+        this.#appState.updatePoint(point);
       },
     };
   }
 
-  #closeForm({ pointComponent, formComponent, escKeydownHandler }) {
-    replace(pointComponent, formComponent);
-    document.removeEventListener('keydown', escKeydownHandler);
-    this.#currentOpenForm = null;
+  #updatePoint(pointId) {
+    const pointPresenter = this.#pointComponents.get(pointId);
+
+    if (!pointPresenter) {
+      return;
+    }
+
+    const updatedPoint = this.#pointsModel.getPointById(pointId);
+
+    if (!updatedPoint) {
+      return;
+    }
+
+    pointPresenter.init(updatedPoint);
+  }
+
+  #renderHint(message, container) {
+    container.innerHTML = '';
+    render(new HintView({ message }), container);
   }
 }

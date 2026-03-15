@@ -160,10 +160,12 @@ export default class FormView extends AbstractView {
   #handleFormSubmit = null;
   #handleFormDecline = null;
 
-  constructor({ formData, onFormSubmit, onFormDecline }) {
+  constructor({ formData, callbacks }) {
     super();
 
     const { point, offers, checkedOffers, details, destinations } = formData;
+    const { onFormSubmit, onFormDecline } = callbacks;
+
     this.#point = point;
     this.#offers = offers;
     this.#checkedOffers = checkedOffers;
