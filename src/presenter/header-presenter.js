@@ -1,4 +1,3 @@
-import { generateFilters } from '../common/sort';
 import { remove, render, RenderPosition } from '../framework/render';
 import AddPointView from '../view/add-point-view';
 import FiltersView from '../view/filters-view';
@@ -8,14 +7,16 @@ export default class HeaderPresenter {
   #contentNode = null;
   #pointsModel = null;
   #appState = null;
+  #sortService = null;
 
   #addPointComponent = null;
   #infoComponent = null;
 
-  constructor({ contentNode, pointsModel, appState }) {
+  constructor({ contentNode, pointsModel, appState, sortService }) {
     this.#contentNode = contentNode;
     this.#pointsModel = pointsModel;
     this.#appState = appState;
+    this.#sortService = sortService;
 
     this.#appState.subscribe((state, updateType, restData) => {
       this.#handleStateChange(state, updateType, restData);
@@ -30,14 +31,15 @@ export default class HeaderPresenter {
 
   #handleStateChange(state) {
     this.#updateAddButton(state);
-    this.#updateHeader(state);
+    this.#updateHeader(this.#pointsModel.points, state);
   }
 
   #renderFilters() {
     const filtersNode = this.#contentNode.querySelector(
       '.trip-controls__filters',
     );
-    const filters = generateFilters(this.#pointsModel.points);
+
+    const filters = this.#sortService.generateFilters();
 
     render(new FiltersView({ filters: filters }), filtersNode);
   }
@@ -66,7 +68,9 @@ export default class HeaderPresenter {
     );
   }
 
-  #updateHeader({ points, isLoading }) {
+  #updateHeader(points, state) {
+    const { isLoading } = state;
+
     if (this.#infoComponent) {
       remove(this.#infoComponent);
       this.#infoComponent = null;
