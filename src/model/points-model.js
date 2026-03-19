@@ -5,7 +5,7 @@ export default class PointsModel {
   #destinations = [];
   #offers = [];
   #newPoint = {};
-  #points;
+  #points = new Map();
 
   init() {
     this.#destinations = destinationsMock;
@@ -50,7 +50,7 @@ export default class PointsModel {
     return this.#destinations.find((dest) => dest.id === id);
   }
 
-  getDestinationId(name) {
+  getDestinationIdByName(name) {
     return this.#destinations.find((dest) => dest.name === name)?.id;
   }
 

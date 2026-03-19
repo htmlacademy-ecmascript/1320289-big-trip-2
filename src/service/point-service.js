@@ -32,6 +32,6 @@ export default class PointService {
   }
 
   getDestinationIdByName(name) {
-    return this.#pointsModel.getDestinationId(name);
+    return this.#pointsModel.getDestinationIdByName(name);
   }
 }
