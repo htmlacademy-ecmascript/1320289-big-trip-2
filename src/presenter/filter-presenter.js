@@ -2,7 +2,7 @@ import { FilterPredicates } from '../common/sort';
 import { remove, render, RenderPosition } from '../framework/render';
 import FiltersView from '../view/filters-view';
 
-export class FilterPresenter {
+export default class FilterPresenter {
   #callbacks = null;
   #container = null;
   #filterSortService = null;

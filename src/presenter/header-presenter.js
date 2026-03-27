@@ -1,7 +1,7 @@
 import { remove, render, RenderPosition } from '../framework/render';
 import AddPointView from '../view/add-point-view';
-import { FilterPresenter } from './filter-presenter';
-import { InfoPresenter } from './info-presenter';
+import FilterPresenter from './filter-presenter';
+import InfoPresenter from './info-presenter';
 
 export default class HeaderPresenter {
   #contentNode = null;
@@ -11,6 +11,7 @@ export default class HeaderPresenter {
   #infoService = null;
   #infoPresenter = null;
   #filterPresenter = null;
+  #handleAddPointClick = null;
 
   #addPointComponent = null;
 
@@ -21,6 +22,7 @@ export default class HeaderPresenter {
       appState,
       filterSortService,
       infoService,
+      onAddPointClick,
     } = data;
 
     this.#contentNode = contentNode;
@@ -28,6 +30,7 @@ export default class HeaderPresenter {
     this.#appState = appState;
     this.#filterSortService = filterSortService;
     this.#infoService = infoService;
+    this.#handleAddPointClick = onAddPointClick;
 
     this.#appState.subscribe((state, updateType, restData) => {
       this.#handleStateChange(state, updateType, restData);
@@ -65,7 +68,10 @@ export default class HeaderPresenter {
   }
 
   #renderAddButton() {
-    this.#addPointComponent = new AddPointView({ isLoading: false });
+    this.#addPointComponent = new AddPointView({
+      isLoading: false,
+      onClick: this.#handleAddPointClick,
+    });
 
     render(
       this.#addPointComponent,
@@ -79,7 +85,10 @@ export default class HeaderPresenter {
       remove(this.#addPointComponent);
     }
 
-    this.#addPointComponent = new AddPointView(isLoading);
+    this.#addPointComponent = new AddPointView({
+      isLoading,
+      onClick: this.#handleAddPointClick,
+    });
 
     render(
       this.#addPointComponent,

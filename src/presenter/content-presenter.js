@@ -4,6 +4,7 @@ import ListView from '../view/list-view';
 import PointPresenter from './point-presenter';
 import HintView from '../view/hint-view';
 import SortPresenter from './sort-presenter';
+import AddPointPresenter from './add-point-presenter';
 
 export default class ContentPresenter {
   #contentNode = null;
@@ -16,6 +17,7 @@ export default class ContentPresenter {
   #pointComponents = new Map();
   #sortedPoints = [];
   #currentOpenFormId = null;
+  #addPointPresenter = null;
 
   #list = new ListView();
   #listElement = this.#list.element;
@@ -148,5 +150,35 @@ export default class ContentPresenter {
   #renderHint(message, container) {
     container.innerHTML = '';
     render(new HintView({ message }), container);
+  }
+
+  openAddForm() {
+    if (this.#currentOpenFormId) {
+      this.#pointComponents.get(this.#currentOpenFormId)?.resetView();
+      this.#currentOpenFormId = null;
+    }
+
+    if (!this.#contentNode.contains(this.#listElement)) {
+      this.#contentNode.innerHTML = '';
+      render(this.#listElement, this.#contentNode);
+    }
+
+    this.#addPointPresenter?.destroy();
+    this.#addPointPresenter = new AddPointPresenter({
+      container: this.#listElement,
+      pointService: this.#pointService,
+      pointsModel: this.#pointsModel,
+      keyboardManager: this.#keyboardManager,
+      callbacks: {
+        onPointAdd: () => {
+          this.#appState.notifyPointsChanged();
+        },
+        onCancel: () => {
+          this.#addPointPresenter = null;
+        },
+      },
+    });
+
+    this.#addPointPresenter.init();
   }
 }

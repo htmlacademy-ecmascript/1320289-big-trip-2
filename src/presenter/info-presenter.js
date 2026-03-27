@@ -1,7 +1,7 @@
 import { remove, render, RenderPosition } from '../framework/render';
 import InfoView from '../view/info-view';
 
-export class InfoPresenter {
+export default class InfoPresenter {
   #infoService = null;
   #contentNode = null;
   #infoComponent = null;

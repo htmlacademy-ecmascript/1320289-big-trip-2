@@ -2,7 +2,7 @@ import { FORMAT_TIME } from '../common/consts';
 import { getDateInFormat } from '../common/date';
 import { getArrayFromMap } from '../common/utils';
 
-export class InfoService {
+export default class InfoService {
   #pointsModel = null;
 
   constructor(pointsModel) {
