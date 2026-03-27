@@ -28,14 +28,21 @@ export default class AddPointPresenter {
     const formData = this.#pointService.getFormData(this.#point);
     this.#formComponent = new FormView({
       formData,
-      callbacks: this.#getFormCallbacks(),
+      callbacks: this.#pointService.getFormCallbacks({
+        point: this.#point,
+        getFormComponent: () => this.#formComponent,
+        callbacks: {
+          closeForm: () => this.closeForm(),
+          onPointAdd: () => this.#callbacks?.onPointAdd(),
+        },
+      }),
     });
 
     render(this.#formComponent, this.#container, RenderPosition.AFTERBEGIN);
     this.keyboardManager.addEscHandler('new-point', () => this.destroy());
   }
 
-  destroy() {
+  closeForm() {
     if (!this.#formComponent) {
       return;
     }
@@ -44,40 +51,5 @@ export default class AddPointPresenter {
     this.#formComponent = null;
     this.keyboardManager.removeEscHandler('new-point');
     this.#callbacks?.onCancel();
-  }
-
-  #getFormCallbacks() {
-    return {
-      onFormSubmit: () => {
-        this.#pointsModel.addPoint(this.#point);
-        this.#callbacks?.onPointAdd();
-        this.destroy();
-      },
-      onFormDecline: () => this.destroy(),
-      onTypeChange: (newType) => {
-        this.#point = this.#point.setType(newType);
-        this.#formComponent.updateElement(
-          this.#pointService.getFormData(this.#point),
-        );
-      },
-      onOfferSelect: (offerId) => {
-        this.#point = this.#point.toggleOffer(offerId);
-        this.#formComponent.updateElement(
-          this.#pointService.getFormData(this.#point),
-        );
-      },
-      onDestinationChange: (destination) => {
-        const id = this.#pointService.getDestinationIdByName(destination);
-
-        if (id === undefined) {
-          return;
-        }
-
-        this.#point = this.#point.setDestination(id);
-        this.#formComponent.updateElement(
-          this.#pointService.getFormData(this.#point),
-        );
-      },
-    };
   }
 }

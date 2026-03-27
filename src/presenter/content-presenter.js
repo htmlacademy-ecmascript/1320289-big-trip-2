@@ -163,7 +163,7 @@ export default class ContentPresenter {
       render(this.#listElement, this.#contentNode);
     }
 
-    this.#addPointPresenter?.destroy();
+    this.#addPointPresenter?.closeForm();
     this.#addPointPresenter = new AddPointPresenter({
       container: this.#listElement,
       pointService: this.#pointService,

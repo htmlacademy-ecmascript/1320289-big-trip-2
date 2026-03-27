@@ -3,7 +3,7 @@ import { getDateInFormat, getDiffInTime } from '../common/date';
 
 const getPointInfoTemplate = (point, destination) => {
   const { dateFrom, type } = point;
-  const { name } = destination;
+  const { name = 'Unknown' } = destination;
   return `
     <time class="event__date" datetime="${dateFrom}">${getDateInFormat(dateFrom, FORMAT_TIME.MD)}</time>
     <div class="event__type">

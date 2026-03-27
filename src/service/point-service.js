@@ -2,9 +2,20 @@ import { FormModes } from '../common/consts';
 
 export default class PointService {
   #pointsModel = null;
+  #formCallbacks = null;
 
   constructor(pointsModel) {
     this.#pointsModel = pointsModel;
+  }
+
+  getFormCallbacks({ point, getFormComponent, callbacks }) {
+    this.#formCallbacks = null;
+    this.#formCallbacks = this.#getFormCallbacks({
+      point,
+      getFormComponent,
+      callbacks,
+    });
+    return this.#formCallbacks;
   }
 
   #getFormMode(point) {
@@ -12,11 +23,65 @@ export default class PointService {
     return isUpdateMode ? FormModes.Update : FormModes.Create;
   }
 
+  #getFormCallbacks({ point, getFormComponent, callbacks }) {
+    const mode = this.#getFormMode(point);
+
+    const baseCallBacks = {
+      onTypeChange: (newType) => {
+        point = point.setType(newType);
+        getFormComponent().updateElement(this.getFormData(point));
+      },
+      onOfferSelect: (offerId) => {
+        point = point.toggleOffer(offerId);
+        getFormComponent().updateElement(this.getFormData(point));
+      },
+      onDestinationChange: (destination) => {
+        const id = this.getDestinationIdByName(destination);
+
+        if (id === undefined) {
+          return;
+        }
+
+        point = point.setDestination(id);
+        getFormComponent().updateElement(this.getFormData(point));
+      },
+    };
+
+    const createCallbacks = {
+      onFormSubmit: () => {
+        this.#pointsModel.addPoint(point);
+        callbacks?.onPointAdd();
+        callbacks?.closeForm();
+      },
+      onFormDecline: () => {
+        // callbacks?.onCancel();
+        callbacks?.closeForm();
+      },
+    };
+
+    const updateCallbacks = {
+      onFormSubmit: () => {
+        this.#pointsModel.updatePoint(point);
+        callbacks?.closeForm();
+      },
+      onFormDecline: () => {
+        callbacks?.closeForm();
+      },
+    };
+
+    if (mode === FormModes.Update) {
+      return { ...baseCallBacks, ...updateCallbacks };
+    }
+
+    return { ...baseCallBacks, ...createCallbacks };
+  }
+
   getPointData(point) {
     return {
       point: point.data,
       offers: this.#pointsModel.getOffersById(point.type, point.offers),
-      destination: this.#pointsModel.getDestinationById(point.destination),
+      destination:
+        this.#pointsModel.getDestinationById(point.destination) ?? {},
     };
   }
 
