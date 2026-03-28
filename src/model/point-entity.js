@@ -73,16 +73,16 @@ export default class PointEntity {
     return data;
   }
 
-  updateData(newData = {}) {
+  #updateData(newData = {}) {
     return new PointEntity({ ...this.data, ...newData });
   }
 
   toggleFavorite() {
-    return this.updateData({ isFavorite: !this.#isFavorite });
+    return this.#updateData({ isFavorite: !this.#isFavorite });
   }
 
   setType(newType) {
-    return this.updateData({ type: newType, offers: [] });
+    return this.#updateData({ type: newType, offers: [] });
   }
 
   toggleOffer(offerId) {
@@ -91,10 +91,18 @@ export default class PointEntity {
     const newOffers = hasOffer
       ? this.#offers.filter((item) => item !== id)
       : [...this.#offers, id];
-    return this.updateData({ offers: newOffers });
+    return this.#updateData({ offers: newOffers });
   }
 
   setDestination(destinationId) {
-    return this.updateData({ destination: destinationId });
+    return this.#updateData({ destination: destinationId });
+  }
+
+  setDate(dateType, date) {
+    return this.#updateData({ [dateType]: date });
+  }
+
+  setPrice(price) {
+    return this.#updateData({ basePrice: price });
   }
 }

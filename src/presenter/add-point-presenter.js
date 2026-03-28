@@ -39,7 +39,7 @@ export default class AddPointPresenter {
     });
 
     render(this.#formComponent, this.#container, RenderPosition.AFTERBEGIN);
-    this.keyboardManager.addEscHandler('new-point', () => this.destroy());
+    this.keyboardManager.addEscHandler('new-point', () => this.closeForm());
   }
 
   closeForm() {

@@ -23,7 +23,7 @@ appState.isLoading = false;
 
 const pointService = new PointService(pointsModel);
 const filterSortService = new FilterSortService({ pointsModel, appState });
-const infoService = new InfoService(pointsModel);
+const infoService = new InfoService(pointsModel, appState);
 
 const contentPresenter = new ContentPresenter({
   contentNode: eventsNode,

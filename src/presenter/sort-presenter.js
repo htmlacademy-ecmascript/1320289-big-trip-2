@@ -1,4 +1,3 @@
-import { SortComparators } from '../common/sort';
 import { render } from '../framework/render';
 import SortView from '../view/sort-view';
 
@@ -23,15 +22,5 @@ export default class SortPresenter {
       }),
       this.#container,
     );
-  }
-
-  getSortedPoints(points, sortType) {
-    const comparator = SortComparators[sortType];
-
-    if (!comparator) {
-      return points;
-    }
-
-    return [...points].sort(comparator);
   }
 }

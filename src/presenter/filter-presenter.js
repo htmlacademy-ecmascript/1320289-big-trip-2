@@ -1,4 +1,3 @@
-import { FilterPredicates } from '../common/sort';
 import { remove, render, RenderPosition } from '../framework/render';
 import FiltersView from '../view/filters-view';
 
@@ -7,7 +6,6 @@ export default class FilterPresenter {
   #container = null;
   #filterSortService = null;
   #filterComponent = null;
-  #filterPredicate = () => true;
 
   constructor({ callbacks, container, filterSortService }) {
     this.#callbacks = callbacks;
@@ -30,13 +28,5 @@ export default class FilterPresenter {
       remove(this.#filterComponent);
     }
     this.init();
-  }
-
-  set filterPredicate(predicate) {
-    this.#filterPredicate = FilterPredicates[predicate];
-  }
-
-  get filterPredicate() {
-    return this.#filterPredicate;
   }
 }

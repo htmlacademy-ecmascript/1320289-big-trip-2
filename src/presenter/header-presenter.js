@@ -1,3 +1,4 @@
+import { FilterPredicates } from '../common/sort';
 import { remove, render, RenderPosition } from '../framework/render';
 import AddPointView from '../view/add-point-view';
 import FilterPresenter from './filter-presenter';
@@ -44,6 +45,9 @@ export default class HeaderPresenter {
   }
 
   #handleStateChange(state) {
+    const predicate = FilterPredicates[state.currentFilter];
+    this.#pointsModel.setFilterPredicate(predicate);
+
     this.#updateAddButton(state.isLoading);
     this.#renderInfo(state.isLoading);
     this.#filterPresenter?.update();
@@ -118,8 +122,6 @@ export default class HeaderPresenter {
       return;
     }
 
-    this.#filterPresenter.filterPredicate = filterType;
-    this.#pointsModel.setFilterPredicate(this.#filterPresenter.filterPredicate);
     this.#appState.currentFilter = filterType;
   }
 }

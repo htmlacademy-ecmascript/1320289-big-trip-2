@@ -27,4 +27,24 @@ export default class FilterSortService {
       isChecked: sortType === this.#appState.currentSort,
     }));
   }
+
+  getFilteredPoints(points, filterType) {
+    const predicate = FilterPredicates[filterType];
+
+    if (!predicate) {
+      return points;
+    }
+
+    return [...points].filter(predicate);
+  }
+
+  getSortedPoints(points, sortType) {
+    const comparator = SortComparators[sortType];
+
+    if (!comparator) {
+      return points;
+    }
+
+    return [...points].sort(comparator);
+  }
 }

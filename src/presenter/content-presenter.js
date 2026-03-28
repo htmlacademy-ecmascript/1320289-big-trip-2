@@ -57,7 +57,13 @@ export default class ContentPresenter {
 
     this.#clearPoints();
     this.#contentNode.innerHTML = '';
-    this.#renderContent(this.#pointsModel.filteredPoints, state);
+
+    const filtered = this.#filterSortService.getFilteredPoints(
+      this.#pointsModel.points,
+      state.currentFilter,
+    );
+
+    this.#renderContent(filtered, state);
   }
 
   #renderContent(points, state) {
@@ -92,10 +98,18 @@ export default class ContentPresenter {
     const pointPresenter = new PointPresenter({
       container: this.#listElement,
       callbacks: {
+        onPointUpdate: () => {
+          this.#appState.notifyPointsChanged();
+        },
+        onPointDelete: () => {
+          this.#appState.notifyPointsChanged();
+          this.#currentOpenFormId = null;
+        },
         onModeChange: () => {
           if (this.#currentOpenFormId) {
             this.#pointComponents.get(this.#currentOpenFormId).resetView();
           }
+          this.#addPointPresenter?.closeForm();
           this.#currentOpenFormId = point.id;
         },
         onFavoriteClick: () => {
@@ -133,7 +147,8 @@ export default class ContentPresenter {
     });
 
     sortPresenter.init();
-    this.#sortedPoints = sortPresenter.getSortedPoints(
+
+    this.#sortedPoints = this.#filterSortService.getSortedPoints(
       points,
       this.#appState.currentSort,
     );
@@ -153,6 +168,8 @@ export default class ContentPresenter {
   }
 
   openAddForm() {
+    this.#appState.resetFilterAndSort();
+
     if (this.#currentOpenFormId) {
       this.#pointComponents.get(this.#currentOpenFormId)?.resetView();
       this.#currentOpenFormId = null;
@@ -164,6 +181,7 @@ export default class ContentPresenter {
     }
 
     this.#addPointPresenter?.closeForm();
+
     this.#addPointPresenter = new AddPointPresenter({
       container: this.#listElement,
       pointService: this.#pointService,

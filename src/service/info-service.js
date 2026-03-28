@@ -1,18 +1,26 @@
 import { FORMAT_TIME } from '../common/consts';
 import { getDateInFormat } from '../common/date';
+import { FilterPredicates } from '../common/sort';
 import { getArrayFromMap } from '../common/utils';
 
 export default class InfoService {
   #pointsModel = null;
+  #appState = null;
 
-  constructor(pointsModel) {
+  constructor(pointsModel, appState) {
     this.#pointsModel = pointsModel;
+    this.#appState = appState;
+  }
+
+  get #filteredPoints() {
+    const predicate = FilterPredicates[this.#appState.currentFilter];
+    return predicate
+      ? this.#pointsModel.points.filter(predicate)
+      : this.#pointsModel.points;
   }
 
   getDestinations() {
-    const destinations = this.#pointsModel.filteredPoints.map(
-      (point) => point.destination,
-    );
+    const destinations = this.#filteredPoints.map((point) => point.destination);
 
     const names = new Map(
       destinations.map((id) => [
@@ -27,9 +35,7 @@ export default class InfoService {
   }
 
   getDates() {
-    const dates = this.#pointsModel.filteredPoints.map(
-      (point) => point.dateFrom,
-    );
+    const dates = this.#filteredPoints.map((point) => point.dateFrom);
 
     const minDate = dates.reduce((min, date) => (date < min ? date : min));
     const maxDate = dates.reduce((max, date) => (date > max ? date : max));
@@ -48,7 +54,7 @@ export default class InfoService {
   }
 
   getPrice() {
-    const price = this.#pointsModel.filteredPoints.reduce(
+    const price = this.#filteredPoints.reduce(
       (total, point) => total + point.basePrice,
       0,
     );

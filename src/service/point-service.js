@@ -45,6 +45,12 @@ export default class PointService {
         point = point.setDestination(id);
         getFormComponent().updateElement(this.getFormData(point));
       },
+      onDateChange: (dateType, date) => {
+        point = point.setDate(dateType, date);
+      },
+      onPriceChange: (price) => {
+        point = point.setPrice(price);
+      },
     };
 
     const createCallbacks = {
@@ -54,7 +60,10 @@ export default class PointService {
         callbacks?.closeForm();
       },
       onFormDecline: () => {
-        // callbacks?.onCancel();
+        callbacks?.onCancel();
+        callbacks?.closeForm();
+      },
+      onFormReset: () => {
         callbacks?.closeForm();
       },
     };
@@ -62,9 +71,12 @@ export default class PointService {
     const updateCallbacks = {
       onFormSubmit: () => {
         this.#pointsModel.updatePoint(point);
+        callbacks?.onPointUpdate();
         callbacks?.closeForm();
       },
-      onFormDecline: () => {
+      onFormDecline: (id) => {
+        this.#pointsModel.removePoint(id);
+        callbacks?.onDelete();
         callbacks?.closeForm();
       },
     };

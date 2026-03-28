@@ -61,6 +61,8 @@ export default class PointPresenter {
       getFormComponent: () => this.#formComponent,
       callbacks: {
         closeForm: () => this.#closeForm(),
+        onDelete: () => this.#callbacks?.onPointDelete(),
+        onPointUpdate: () => this.#callbacks?.onPointUpdate(),
       },
     });
 

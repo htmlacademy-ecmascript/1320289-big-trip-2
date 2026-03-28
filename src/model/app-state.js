@@ -13,6 +13,7 @@ export default class AppState {
 
   set currentFilter(filter) {
     this.#currentFilter = filter;
+    this.#currentSort = SortTypes.DAY;
     this.#notify(UpdateTypes.FullChange);
   }
 
@@ -39,6 +40,12 @@ export default class AppState {
       currentFilter: this.#currentFilter,
       currentSort: this.#currentSort,
     };
+  }
+
+  resetFilterAndSort() {
+    this.#currentFilter = FilterTypes.EVERYTHING;
+    this.#currentSort = SortTypes.DAY;
+    this.#notify(UpdateTypes.FullChange);
   }
 
   subscribe(observer) {
