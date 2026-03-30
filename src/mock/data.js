@@ -1,4 +1,4 @@
-import { POINT_TYPES } from '../common/consts';
+import { PointTypes } from '../common/point';
 import { getRandomArrayElement } from '../common/utils';
 
 const offersList = [
@@ -184,6 +184,8 @@ const offersList = [
   },
 ];
 
+const pointTypes = Object.values(PointTypes);
+
 const items = [
   {
     id: 1,
@@ -193,7 +195,7 @@ const items = [
     destination: 1,
     isFavorite: false,
     offers: ['1', '2'],
-    type: POINT_TYPES[5],
+    type: PointTypes.DRIVE,
   },
   {
     id: 2,
@@ -203,7 +205,7 @@ const items = [
     destination: 2,
     isFavorite: false,
     offers: ['1', '2'],
-    type: getRandomArrayElement(POINT_TYPES),
+    type: getRandomArrayElement(pointTypes),
   },
   {
     id: 3,
@@ -213,7 +215,7 @@ const items = [
     destination: 3,
     isFavorite: false,
     offers: ['1'],
-    type: getRandomArrayElement(POINT_TYPES),
+    type: getRandomArrayElement(pointTypes),
   },
   {
     id: 4,
@@ -223,7 +225,7 @@ const items = [
     destination: 3,
     isFavorite: true,
     offers: ['1'],
-    type: getRandomArrayElement(POINT_TYPES),
+    type: getRandomArrayElement(pointTypes),
   },
   {
     id: 5,
@@ -233,7 +235,17 @@ const items = [
     destination: 3,
     isFavorite: true,
     offers: ['1'],
-    type: getRandomArrayElement(POINT_TYPES),
+    type: getRandomArrayElement(pointTypes),
+  },
+  {
+    id: 6,
+    basePrice: 750,
+    dateFrom: '2026-03-24T10:00:00.000Z', // 3 дня назад
+    dateTo: '2026-03-28T18:00:00.000Z', // через 2 дня
+    destination: 1,
+    isFavorite: false,
+    offers: ['1'],
+    type: PointTypes.TAXI,
   },
 ];
 

@@ -1,22 +1,38 @@
+import { AppStates } from '../common/app';
+import { FilterPredicates } from '../common/sort';
 import { remove, render, RenderPosition } from '../framework/render';
 import AddPointView from '../view/add-point-view';
-import FiltersView from '../view/filters-view';
-import InfoView from '../view/info-view';
+import FilterPresenter from './filter-presenter';
+import InfoPresenter from './info-presenter';
 
 export default class HeaderPresenter {
   #contentNode = null;
   #pointsModel = null;
   #appState = null;
-  #sortService = null;
+  #filterSortService = null;
+  #infoService = null;
+  #infoPresenter = null;
+  #filterPresenter = null;
+  #handleAddPointClick = null;
 
   #addPointComponent = null;
-  #infoComponent = null;
 
-  constructor({ contentNode, pointsModel, appState, sortService }) {
+  constructor(data) {
+    const {
+      contentNode,
+      pointsModel,
+      appState,
+      filterSortService,
+      infoService,
+      onAddPointClick,
+    } = data;
+
     this.#contentNode = contentNode;
     this.#pointsModel = pointsModel;
     this.#appState = appState;
-    this.#sortService = sortService;
+    this.#filterSortService = filterSortService;
+    this.#infoService = infoService;
+    this.#handleAddPointClick = onAddPointClick;
 
     this.#appState.subscribe((state, updateType, restData) => {
       this.#handleStateChange(state, updateType, restData);
@@ -25,13 +41,16 @@ export default class HeaderPresenter {
 
   init() {
     this.#renderFilters();
-    this.#renderAddButton();
     this.#handleStateChange(this.#appState.state);
   }
 
   #handleStateChange(state) {
-    this.#updateAddButton(state);
-    this.#updateHeader(this.#pointsModel.points, state);
+    const predicate = FilterPredicates[state.currentFilter];
+    this.#pointsModel.setFilterPredicate(predicate);
+
+    this.#renderAddButton(state.renderState);
+    this.#renderInfo(state.renderState);
+    this.#filterPresenter?.update();
   }
 
   #renderFilters() {
@@ -39,13 +58,28 @@ export default class HeaderPresenter {
       '.trip-controls__filters',
     );
 
-    const filters = this.#sortService.generateFilters();
+    this.#filterPresenter = new FilterPresenter({
+      callbacks: {
+        onFilterTypeChange: (filterType) => {
+          this.#handlerFilterTypeChange(filterType);
+        },
+      },
+      container: filtersNode,
+      filterSortService: this.#filterSortService,
+    });
 
-    render(new FiltersView({ filters: filters }), filtersNode);
+    this.#filterPresenter.init();
   }
 
-  #renderAddButton() {
-    this.#addPointComponent = new AddPointView({ isLoading: false });
+  #renderAddButton(renderState) {
+    const isDisabled = renderState !== AppStates.IsReady;
+
+    remove(this.#addPointComponent);
+
+    this.#addPointComponent = new AddPointView({
+      isDisabled,
+      onClick: this.#handleAddPointClick,
+    });
 
     render(
       this.#addPointComponent,
@@ -54,38 +88,30 @@ export default class HeaderPresenter {
     );
   }
 
-  #updateAddButton(isLoading) {
-    if (this.#addPointComponent) {
-      remove(this.#addPointComponent);
-    }
+  #renderInfo(renderState) {
+    this.#infoPresenter?.destroy();
+    this.#infoPresenter = null;
 
-    this.#addPointComponent = new AddPointView(isLoading);
-
-    render(
-      this.#addPointComponent,
-      this.#contentNode,
-      RenderPosition.BEFOREEND,
-    );
-  }
-
-  #updateHeader(points, state) {
-    const { isLoading } = state;
-
-    if (this.#infoComponent) {
-      remove(this.#infoComponent);
-      this.#infoComponent = null;
-    }
-
-    if (points.length === 0 || isLoading) {
+    if (
+      this.#pointsModel.filteredPoints.length === 0 ||
+      renderState !== AppStates.IsReady
+    ) {
       return;
     }
 
-    this.#infoComponent = new InfoView({
-      title: 'Amsterdam &mdash; Chamonix &mdash; Geneva',
-      description: '18&nbsp;&mdash;&nbsp;20 Mar',
-      cost: '1230',
+    this.#infoPresenter = new InfoPresenter({
+      infoService: this.#infoService,
+      contentNode: this.#contentNode,
     });
 
-    render(this.#infoComponent, this.#contentNode, RenderPosition.AFTERBEGIN);
+    this.#infoPresenter.init();
+  }
+
+  #handlerFilterTypeChange(filterType) {
+    if (filterType === this.#appState.currentFilter) {
+      return;
+    }
+
+    this.#appState.currentFilter = filterType;
   }
 }

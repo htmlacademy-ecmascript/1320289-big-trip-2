@@ -53,14 +53,25 @@ export default class PointPresenter {
 
   #createComponents() {
     const pointData = this.#pointService.getPointData(this.#point);
-    const pointCallbacks = this.#getPointCallbacks();
 
     const formData = this.#pointService.getFormData(this.#point);
-    const formCallbacks = this.#getFormCallbacks();
+    const formCallbacks = this.#pointService.getFormCallbacks({
+      point: this.#point,
+      getFormComponent: () => this.#formComponent,
+      callbacks: {
+        closeForm: () => this.#closeForm(),
+      },
+    });
 
     this.#pointComponent = new PointView({
       pointData,
-      callbacks: pointCallbacks,
+      callbacks: {
+        ...this.#callbacks,
+        onEditClick: () => {
+          this.#callbacks?.onEditClick();
+          this.#openForm();
+        },
+      },
     });
 
     this.#formComponent = new FormView({
@@ -87,48 +98,6 @@ export default class PointPresenter {
     replace(this.#pointComponent, this.#formComponent);
     this.#keyboardManager.removeEscHandler(this.#pointComponent.id);
     this.#isOpenForm = false;
-  }
-
-  #getPointCallbacks() {
-    return {
-      onEditClick: () => {
-        this.#callbacks?.onModeChange();
-        this.#openForm();
-      },
-      onFavoriteClick: this.#callbacks.onFavoriteClick,
-    };
-  }
-
-  #getFormCallbacks() {
-    return {
-      onFormSubmit: () => {
-        this.#closeForm();
-      },
-      onFormDecline: () => {
-        this.#closeForm();
-      },
-      onTypeChange: (newType) => {
-        this.#point = this.#point.setType(newType);
-        const newFormData = this.#pointService.getFormData(this.#point);
-        this.#formComponent.updateElement(newFormData);
-      },
-      onOfferSelect: (id) => {
-        this.#point = this.#point.toggleOffer(id);
-        const newFormData = this.#pointService.getFormData(this.#point);
-        this.#formComponent.updateElement(newFormData);
-      },
-      onDestinationChange: (destination) => {
-        const destinationId =
-          this.#pointService.getDestinationIdByName(destination);
-
-        if (destinationId === undefined) {
-          return;
-        }
-        this.#point = this.#point.setDestination(destinationId);
-        const newFormData = this.#pointService.getFormData(this.#point);
-        this.#formComponent.updateElement(newFormData);
-      },
-    };
   }
 
   resetView() {

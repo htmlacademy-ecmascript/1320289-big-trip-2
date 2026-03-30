@@ -1,4 +1,6 @@
-import { FORMAT_TIME, FormModes, POINT_TYPES } from '../common/consts';
+import { FormModes } from '../common/app';
+import { PointTypes } from '../common/point';
+import { TimeFormates } from '../common/time';
 import { getDateInFormat } from '../common/date';
 
 const getEventTypeTemplate = (pointType, type) => {
@@ -11,22 +13,28 @@ const getEventTypeTemplate = (pointType, type) => {
     </div>`;
 };
 
-// curentType
-const getTypesBlockTemplate = ({ type }) => `
-  <div class="event__type-wrapper">
-    <label class="event__type  event__type-btn" for="event-type-toggle-1">
-      <span class="visually-hidden">Choose event type</span>
-      <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
-    </label>
-    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+const getTypesBlockTemplate = ({ type }) => {
+  const getPointTypes = () =>
+    Object.values(PointTypes)
+      .map((pointType) => getEventTypeTemplate(pointType, type))
+      .join('');
 
-    <div class="event__type-list">
-      <fieldset class="event__type-group">
-        <legend class="visually-hidden">Event type</legend>
-        ${POINT_TYPES.map((pointType) => getEventTypeTemplate(pointType, type)).join('')}
-      </fieldset>
-    </div>
-  </div>`;
+  return `
+    <div class="event__type-wrapper">
+      <label class="event__type  event__type-btn" for="event-type-toggle-1">
+        <span class="visually-hidden">Choose event type</span>
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+      </label>
+      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+
+      <div class="event__type-list">
+        <fieldset class="event__type-group">
+          <legend class="visually-hidden">Event type</legend>
+          ${getPointTypes()}
+        </fieldset>
+      </div>
+    </div>`;
+};
 
 const getDestinationTemplate = ({ name }) =>
   `<option value="${name}"></option>`;
@@ -106,10 +114,10 @@ const getDestinationInfoTemplate = ({ pictures, description }) => {
 const getTimeTemplate = ({ dateFrom, dateTo }) => `
   <div class="event__field-group  event__field-group--time">
     <label class="visually-hidden" for="event-start-time-1">From</label>
-    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateInFormat(dateFrom, FORMAT_TIME.FULL)}">
+    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateInFormat(dateFrom, TimeFormates.FULL)}">
     &mdash;
     <label class="visually-hidden" for="event-end-time-1">To</label>
-    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateInFormat(dateTo, FORMAT_TIME.FULL)}">
+    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateInFormat(dateTo, TimeFormates.FULL)}">
   </div>
 `;
 
@@ -119,7 +127,7 @@ const getPriceTemplate = ({ basePrice }) => `
       <span class="visually-hidden">Price</span>
       &euro;
     </label>
-    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
   </div>
 `;
 
@@ -132,7 +140,7 @@ const getCTAButtons = (isUpdateMode) => {
   return `
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
     <button class="event__reset-btn" type="reset">${isUpdateMode ? 'Delete' : 'Cancel'}</button>
-    ${isUpdateMode && closeButton}`;
+    ${isUpdateMode ? closeButton : ''}`;
 };
 
 const getContentTemplate = (formData) => {

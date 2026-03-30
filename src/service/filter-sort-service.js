@@ -1,6 +1,6 @@
 import { FilterPredicates, SortComparators } from '../common/sort';
 
-export default class SortService {
+export default class FilterSortService {
   #pointsModel = null;
   #appState = null;
 
@@ -26,5 +26,25 @@ export default class SortService {
       isDisabled: this.#pointsModel.points.length < 2,
       isChecked: sortType === this.#appState.currentSort,
     }));
+  }
+
+  getFilteredPoints(points, filterType) {
+    const predicate = FilterPredicates[filterType];
+
+    if (!predicate) {
+      return points;
+    }
+
+    return [...points].filter(predicate);
+  }
+
+  getSortedPoints(points, sortType) {
+    const comparator = SortComparators[sortType];
+
+    if (!comparator) {
+      return points;
+    }
+
+    return [...points].sort(comparator);
   }
 }

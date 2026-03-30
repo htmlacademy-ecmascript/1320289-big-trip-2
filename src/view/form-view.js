@@ -1,9 +1,9 @@
-import { DateTypes } from '../common/consts';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { getContentTemplate } from './form-view-template';
-import flatpickr from 'flatpickr';
-
-import 'flatpickr/dist/flatpickr.min.css';
+import { DateTypes, FormModes } from '../common/app';
 
 export default class FormView extends AbstractStatefulView {
   #handleFormSubmit = null;
@@ -11,6 +11,9 @@ export default class FormView extends AbstractStatefulView {
   #handleTypeChange = null;
   #handleOfferSelect = null;
   #handleDestinationChange = null;
+  #handleDateChange = null;
+  #handlePriceChange = null;
+  #handleFormClose = null;
   #flatpickrStart = null;
   #flatpickrEnd = null;
 
@@ -23,6 +26,9 @@ export default class FormView extends AbstractStatefulView {
       onTypeChange,
       onOfferSelect,
       onDestinationChange,
+      onDateChange,
+      onPriceChange,
+      onFormClose,
     } = callbacks;
 
     this.#handleFormSubmit = onFormSubmit;
@@ -30,6 +36,9 @@ export default class FormView extends AbstractStatefulView {
     this.#handleTypeChange = onTypeChange;
     this.#handleOfferSelect = onOfferSelect;
     this.#handleDestinationChange = onDestinationChange;
+    this.#handleDateChange = onDateChange;
+    this.#handlePriceChange = onPriceChange;
+    this.#handleFormClose = onFormClose;
 
     this._setState(this.#parseDataToState(formData));
     this._restoreHandlers();
@@ -50,11 +59,19 @@ export default class FormView extends AbstractStatefulView {
 
     this.element
       .querySelector('.event__available-offers')
-      .addEventListener('click', this.#selectOfferHandler);
+      ?.addEventListener('click', this.#selectOfferHandler);
 
     this.element
       .querySelector('#event-destination-1')
       .addEventListener('change', this.#changeDestinationHandler);
+
+    this.element
+      .querySelector('#event-price-1')
+      .addEventListener('change', this.#changePriceHandler);
+
+    this.element
+      .querySelector('.event__rollup-btn')
+      ?.addEventListener('click', this.#closeFormHandler);
 
     this.#setFlatpickr();
   }
@@ -75,12 +92,21 @@ export default class FormView extends AbstractStatefulView {
 
   #submitFormHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(this.#parseStateToData(this._state));
   };
 
   #declineFormHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormDecline();
+
+    if (this._state.mode === FormModes.Update) {
+      this.#handleFormDecline(this._state.point);
+    } else {
+      this.#handleFormDecline();
+    }
+  };
+
+  #closeFormHandler = () => {
+    this.#handleFormClose();
   };
 
   #changeTypeHandler = (evt) => {
@@ -104,18 +130,19 @@ export default class FormView extends AbstractStatefulView {
   };
 
   #changeDateHandler = (dateType, [date]) => {
-    const updatedPoint = { ...this._state.point, [dateType]: date };
-
     if (dateType === DateTypes.dateFrom) {
       this.#flatpickrEnd.set('minDate', date);
 
       if (date > new Date(this._state.point.dateTo)) {
-        updatedPoint.dateTo = date;
         this.#flatpickrEnd.setDate(date, false);
       }
     }
 
-    this._setState({ ...this._state, point: updatedPoint });
+    this.#handleDateChange(dateType, date.toISOString());
+  };
+
+  #changePriceHandler = (evt) => {
+    this.#handlePriceChange(Number(evt.target.value));
   };
 
   #setFlatpickr() {
@@ -125,7 +152,7 @@ export default class FormView extends AbstractStatefulView {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.point.dateFrom,
-        onChange: (date) => this.#changeDateHandler(DateTypes.dateFrom, date),
+        onClose: (date) => this.#changeDateHandler(DateTypes.dateFrom, date),
       },
     );
 
@@ -136,7 +163,7 @@ export default class FormView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.point.dateTo,
         minDate: this._state.point.dateFrom,
-        onChange: (date) => this.#changeDateHandler(DateTypes.dateTo, date),
+        onClose: (date) => this.#changeDateHandler(DateTypes.dateTo, date),
       },
     );
   }

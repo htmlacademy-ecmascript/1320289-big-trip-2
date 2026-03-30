@@ -1,18 +1,20 @@
-import { FilterTypes, SortTypes, UpdateTypes } from '../common/consts';
+import { AppStates, FilterTypes, SortTypes, UpdateTypes } from '../common/app';
 
 export default class AppState {
-  #isLoading = true;
+  #renderState = AppStates.IsLoading;
   #currentFilter = FilterTypes.EVERYTHING;
   #currentSort = SortTypes.DAY;
+  #currentOpenFormId = null;
   #observers = [];
 
-  set isLoading(isLoading) {
-    this.#isLoading = isLoading;
+  set renderState(state) {
+    this.#renderState = state;
     this.#notify(UpdateTypes.FullChange);
   }
 
   set currentFilter(filter) {
     this.#currentFilter = filter;
+    this.#currentSort = SortTypes.DAY;
     this.#notify(UpdateTypes.FullChange);
   }
 
@@ -21,8 +23,12 @@ export default class AppState {
     this.#notify(UpdateTypes.FullChange);
   }
 
-  get isLoading() {
-    return this.#isLoading;
+  set currentOpenFormId(id) {
+    this.#currentOpenFormId = id;
+  }
+
+  get renderState() {
+    return this.#renderState;
   }
 
   get currentFilter() {
@@ -33,12 +39,22 @@ export default class AppState {
     return this.#currentSort;
   }
 
+  get currentOpenFormId() {
+    return this.#currentOpenFormId;
+  }
+
   get state() {
     return {
-      isLoading: this.#isLoading,
+      renderState: this.#renderState,
       currentFilter: this.#currentFilter,
       currentSort: this.#currentSort,
     };
+  }
+
+  resetFilterAndSort() {
+    this.#currentFilter = FilterTypes.EVERYTHING;
+    this.#currentSort = SortTypes.DAY;
+    this.#notify(UpdateTypes.FullChange);
   }
 
   subscribe(observer) {

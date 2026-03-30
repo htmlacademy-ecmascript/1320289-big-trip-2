@@ -1,21 +1,23 @@
 import { render } from '../framework/render';
-import { HintTexts, UpdateTypes } from '../common/consts';
+import { AppStates, UpdateTypes } from '../common/app';
+import { AppStateHints, FilterEmptyHints } from '../common/hint';
 import ListView from '../view/list-view';
 import PointPresenter from './point-presenter';
 import HintView from '../view/hint-view';
 import SortPresenter from './sort-presenter';
+import AddPointPresenter from './add-point-presenter';
 
 export default class ContentPresenter {
   #contentNode = null;
   #pointsModel = null;
   #appState = null;
   #pointService = null;
-  #sortService = null;
+  #filterSortService = null;
   #keyboardManager = null;
 
   #pointComponents = new Map();
   #sortedPoints = [];
-  #currentOpenFormId = null;
+  #addPointPresenter = null;
 
   #list = new ListView();
   #listElement = this.#list.element;
@@ -26,7 +28,7 @@ export default class ContentPresenter {
       pointsModel,
       appState,
       pointService,
-      sortService,
+      filterSortService,
       keyboardManager,
     } = data;
 
@@ -35,7 +37,7 @@ export default class ContentPresenter {
     this.#appState = appState;
     this.#pointService = pointService;
     this.#keyboardManager = keyboardManager;
-    this.#sortService = sortService;
+    this.#filterSortService = filterSortService;
 
     this.#appState.subscribe((state, updateType, restData) => {
       this.#handleStateChange(state, updateType, restData);
@@ -55,19 +57,26 @@ export default class ContentPresenter {
 
     this.#clearPoints();
     this.#contentNode.innerHTML = '';
-    this.#renderContent(this.#pointsModel.points, state);
+
+    const filtered = this.#filterSortService.getFilteredPoints(
+      this.#pointsModel.points,
+      state.currentFilter,
+    );
+
+    this.#renderContent(filtered, state);
   }
 
   #renderContent(points, state) {
-    const { isLoading } = state;
+    const { renderState } = state;
 
-    if (isLoading) {
-      this.#renderHint(HintTexts.loading, this.#contentNode);
+    if (renderState !== AppStates.IsReady) {
+      const message = AppStateHints[renderState];
+      this.#renderHint(message, this.#contentNode);
       return;
     }
 
     if (points.length === 0) {
-      this.#renderHint(HintTexts.listEmpty, this.#contentNode);
+      this.#renderEmptyListHint();
       return;
     }
 
@@ -84,26 +93,24 @@ export default class ContentPresenter {
     this.#pointComponents.forEach((presenter) => presenter.destroy());
     this.#pointComponents.clear();
     this.#listElement.innerHTML = '';
+    this.#addPointPresenter = null;
   }
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       container: this.#listElement,
-      callbacks: {
-        onModeChange: () => {
-          if (this.#currentOpenFormId) {
-            this.#pointComponents.get(this.#currentOpenFormId).resetView();
+      callbacks: this.#pointService.getPointCallbacks({
+        point,
+        onEditClick: () => {
+          if (this.#appState.currentOpenFormId) {
+            this.#pointComponents
+              .get(this.#appState.currentOpenFormId)
+              ?.resetView();
           }
-          this.#currentOpenFormId = point.id;
+          this.#addPointPresenter?.resetView();
+          this.#appState.currentOpenFormId = point.id;
         },
-        onFavoriteClick: () => {
-          const updatedPoint = this.#pointsModel.toggleFavorite(point);
-
-          if (updatedPoint) {
-            this.#appState.notifyPointUpdated(updatedPoint);
-          }
-        },
-      },
+      }),
       pointService: this.#pointService,
       keyboardManager: this.#keyboardManager,
     });
@@ -127,11 +134,12 @@ export default class ContentPresenter {
         },
       },
       container: this.#contentNode,
-      sortService: this.#sortService,
+      filterSortService: this.#filterSortService,
     });
 
     sortPresenter.init();
-    this.#sortedPoints = sortPresenter.getSortedPoints(
+
+    this.#sortedPoints = this.#filterSortService.getSortedPoints(
       points,
       this.#appState.currentSort,
     );
@@ -145,8 +153,38 @@ export default class ContentPresenter {
     this.#appState.currentSort = sortType;
   }
 
+  openAddForm() {
+    this.#appState.resetFilterAndSort();
+
+    if (this.#appState.currentOpenFormId) {
+      this.#pointComponents.get(this.#appState.currentOpenFormId)?.resetView();
+      this.#appState.currentOpenFormId = null;
+    }
+
+    if (!this.#contentNode.contains(this.#listElement)) {
+      this.#contentNode.innerHTML = '';
+      render(this.#list, this.#contentNode);
+    }
+
+    this.#addPointPresenter?.resetView();
+
+    this.#addPointPresenter = new AddPointPresenter({
+      container: this.#listElement,
+      pointService: this.#pointService,
+      pointsModel: this.#pointsModel,
+      keyboardManager: this.#keyboardManager,
+    });
+
+    this.#addPointPresenter.init();
+  }
+
   #renderHint(message, container) {
     container.innerHTML = '';
     render(new HintView({ message }), container);
+  }
+
+  #renderEmptyListHint() {
+    const message = FilterEmptyHints[this.#appState.currentFilter];
+    this.#renderHint(message, this.#contentNode);
   }
 }

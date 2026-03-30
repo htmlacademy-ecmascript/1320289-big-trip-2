@@ -1,20 +1,20 @@
-import { SortComparators } from '../common/sort';
 import { render } from '../framework/render';
 import SortView from '../view/sort-view';
 
 export default class SortPresenter {
   #callbacks = null;
   #container = null;
-  #sortService = null;
+  #filterSortService = null;
 
-  constructor({ callbacks, container, sortService }) {
+  constructor({ callbacks, container, filterSortService }) {
     this.#callbacks = callbacks;
     this.#container = container;
-    this.#sortService = sortService;
+    this.#filterSortService = filterSortService;
   }
 
   init() {
-    const sorts = this.#sortService.generateSorts();
+    const sorts = this.#filterSortService.generateSorts();
+
     render(
       new SortView({
         sorts,
@@ -22,15 +22,5 @@ export default class SortPresenter {
       }),
       this.#container,
     );
-  }
-
-  getSortedPoints(points, sortType) {
-    const comparator = SortComparators[sortType];
-
-    if (!comparator) {
-      return points;
-    }
-
-    return [...points].sort(comparator);
   }
 }
