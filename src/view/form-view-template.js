@@ -1,4 +1,4 @@
-import { FormModes } from '../common/app';
+import { FormModes } from '../common/config';
 import { PointTypes } from '../common/point';
 import { TimeFormates } from '../common/time';
 import { getDateInFormat } from '../common/date';

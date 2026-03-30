@@ -6,7 +6,7 @@ import AppState from './model/app-state';
 import KeyboardManager from './manager/keyboard-manager';
 import FilterSortService from './service/filter-sort-service';
 import InfoService from './service/info-service';
-import { AppStates } from './common/app';
+import { AppStates } from './common/config';
 
 const headerContentNode = document.querySelector('.trip-main');
 const eventsNode = document.querySelector('.trip-events');

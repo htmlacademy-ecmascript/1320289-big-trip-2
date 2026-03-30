@@ -1,4 +1,4 @@
-import { FormModes } from '../common/app';
+import { FormModes } from '../common/config';
 
 export default class PointService {
   #pointsModel = null;

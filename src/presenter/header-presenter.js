@@ -1,4 +1,4 @@
-import { AppStates } from '../common/app';
+import { AppStates } from '../common/config';
 import { FilterPredicates } from '../common/sort';
 import { remove, render, RenderPosition } from '../framework/render';
 import AddPointView from '../view/add-point-view';

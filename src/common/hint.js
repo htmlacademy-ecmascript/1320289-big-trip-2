@@ -1,4 +1,4 @@
-import { AppStates, FilterTypes } from './app';
+import { AppStates, FilterTypes } from './config';
 
 const HintTexts = {
   listEmpty: 'Click New Event to create your first point',
