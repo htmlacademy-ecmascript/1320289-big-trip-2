@@ -1,5 +1,5 @@
 import { render } from '../framework/render';
-import { AppStates, UpdateTypes } from '../common/app';
+import { AppStates, UpdateTypes } from '../common/config';
 import { AppStateHints, FilterEmptyHints } from '../common/hint';
 import ListView from '../view/list-view';
 import PointPresenter from './point-presenter';
