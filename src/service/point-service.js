@@ -1,4 +1,5 @@
-import { FormModes } from '../common/app';
+import { FormModes } from '../common/config';
+import { getEncodedData } from '../common/utils';
 
 export default class PointService {
   #pointsModel = null;
@@ -38,7 +39,7 @@ export default class PointService {
         getFormComponent().updateElement(this.getFormData(point));
       },
       onDestinationChange: (destination) => {
-        const id = this.getDestinationIdByName(destination);
+        const id = this.getDestinationIdByName(getEncodedData(destination));
 
         if (id === undefined) {
           return;
@@ -67,8 +68,8 @@ export default class PointService {
     };
 
     const updateCallbacks = {
-      onFormSubmit: () => {
-        this.#pointsModel.updatePoint(point);
+      onFormSubmit: async () => {
+        await this.#pointsModel.updatePoint(point);
         this.#appState.notifyPointsChanged();
         callbacks?.closeForm();
       },
@@ -93,8 +94,8 @@ export default class PointService {
   getPointCallbacks({ point, onEditClick }) {
     return {
       onEditClick,
-      onFavoriteClick: () => {
-        const updated = this.#pointsModel.toggleFavorite(point);
+      onFavoriteClick: async () => {
+        const updated = await this.#pointsModel.toggleFavorite(point);
         if (updated) {
           this.#appState.notifyPointsChanged(updated);
         }

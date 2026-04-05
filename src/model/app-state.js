@@ -1,4 +1,9 @@
-import { AppStates, FilterTypes, SortTypes, UpdateTypes } from '../common/app';
+import {
+  AppStates,
+  FilterTypes,
+  SortTypes,
+  UpdateTypes,
+} from '../common/config';
 
 export default class AppState {
   #renderState = AppStates.IsLoading;
