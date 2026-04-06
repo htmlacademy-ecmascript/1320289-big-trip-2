@@ -37,7 +37,6 @@ const EntityStates = {
   isDisabled: 'IS_DISABLED',
   isSaving: 'IS_SAVING',
   isDeleting: 'IS_DELETING',
-  isShaking: 'IS_SHAKING',
   isReady: 'IS_READY',
 };
 
