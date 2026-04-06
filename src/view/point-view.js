@@ -16,6 +16,10 @@ export default class PointView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  get template() {
+    return getContentTemplate(this._state);
+  }
+
   _restoreHandlers() {
     this.element
       .querySelector('.event__rollup-btn')
@@ -24,10 +28,6 @@ export default class PointView extends AbstractStatefulView {
     this.element
       .querySelector('.event__favorite-btn')
       .addEventListener('click', this.#favoriteClickHandler);
-  }
-
-  get template() {
-    return getContentTemplate(this._state);
   }
 
   #editClickHandler = (evt) => {

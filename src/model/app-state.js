@@ -6,7 +6,7 @@ import {
 } from '../common/config';
 
 export default class AppState {
-  #renderState = AppStates.IsLoading;
+  #renderState = AppStates.LOADING;
   #currentFilter = FilterTypes.EVERYTHING;
   #currentSort = SortTypes.DAY;
   #currentOpenFormId = null;
@@ -14,18 +14,18 @@ export default class AppState {
 
   set renderState(state) {
     this.#renderState = state;
-    this.#notify(UpdateTypes.FullChange);
+    this.#notify(UpdateTypes.MAJOR);
   }
 
   set currentFilter(filter) {
     this.#currentFilter = filter;
     this.#currentSort = SortTypes.DAY;
-    this.#notify(UpdateTypes.FullChange);
+    this.#notify(UpdateTypes.MAJOR);
   }
 
   set currentSort(sort) {
     this.#currentSort = sort;
-    this.#notify(UpdateTypes.FullChange);
+    this.#notify(UpdateTypes.MAJOR);
   }
 
   set currentOpenFormId(id) {
@@ -59,24 +59,24 @@ export default class AppState {
   resetFilterAndSort() {
     this.#currentFilter = FilterTypes.EVERYTHING;
     this.#currentSort = SortTypes.DAY;
-    this.#notify(UpdateTypes.FullChange);
+    this.#notify(UpdateTypes.MAJOR);
   }
 
   subscribe(observer) {
     this.#observers.push(observer);
   }
 
-  #notify(updateType = UpdateTypes.FullChange, restData = {}) {
-    this.#observers.forEach((observer) =>
-      observer(this.state, updateType, restData),
-    );
-  }
-
   notifyPointUpdated(point) {
-    this.#notify(UpdateTypes.SinglePointUpdate, { pointId: point.id });
+    this.#notify(UpdateTypes.MINOR, { pointId: point.id });
   }
 
   notifyPointsChanged() {
-    this.#notify(UpdateTypes.FullChange);
+    this.#notify(UpdateTypes.MAJOR);
+  }
+
+  #notify(updateType = UpdateTypes.MAJOR, restData = {}) {
+    this.#observers.forEach((observer) =>
+      observer(this.state, updateType, restData),
+    );
   }
 }

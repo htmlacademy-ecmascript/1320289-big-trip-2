@@ -8,13 +8,8 @@ import FilterSortService from './service/filter-sort-service';
 import InfoService from './service/info-service';
 import PointsApiService from './service/points-api-service';
 import AdapterService from './service/adapter-service';
-import { ApiSettings } from './common/config';
+import { ApiSettings, TimeLimits } from './common/config';
 import UiBlocker from './framework/ui-blocker/ui-blocker';
-
-const TimeLimit = {
-  LOWER_LIMIT: 0,
-  UPPER_LIMIT: 1000,
-};
 
 const headerContentNode = document.querySelector('.trip-main');
 const eventsNode = document.querySelector('.trip-events');
@@ -26,8 +21,8 @@ const apiService = new PointsApiService({
 });
 
 const uiBlocker = new UiBlocker({
-  lowerLimit: TimeLimit.LOWER_LIMIT,
-  upperLimit: TimeLimit.UPPER_LIMIT,
+  lowerLimit: TimeLimits.LOWER_LIMIT,
+  upperLimit: TimeLimits.UPPER_LIMIT,
 });
 
 const appState = new AppState();

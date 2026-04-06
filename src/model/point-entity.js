@@ -73,10 +73,6 @@ export default class PointEntity {
     return data;
   }
 
-  #updateData(newData = {}) {
-    return new PointEntity({ ...this.data, ...newData });
-  }
-
   toggleFavorite() {
     return this.#updateData({ isFavorite: !this.#isFavorite });
   }
@@ -104,5 +100,9 @@ export default class PointEntity {
 
   setPrice(price) {
     return this.#updateData({ basePrice: price });
+  }
+
+  #updateData(newData = {}) {
+    return new PointEntity({ ...this.data, ...newData });
   }
 }

@@ -13,6 +13,10 @@ export default class PointService {
     this.#uiBlocker = uiBlocker;
   }
 
+  getDestinationIdByName(name) {
+    return this.#pointsModel.getDestinationIdByName(name);
+  }
+
   getFormCallbacks({ point, getFormComponent, callbacks }) {
     this.#formCallbacks = null;
     this.#formCallbacks = this.#getFormCallbacks({
@@ -23,9 +27,50 @@ export default class PointService {
     return this.#formCallbacks;
   }
 
+  getPointCallbacks({ point, getPointComponent, onEditClick }) {
+    return {
+      onEditClick,
+      onFavoriteClick: async () => {
+        try {
+          const updated = await this.#pointsModel.toggleFavorite(point);
+          if (updated) {
+            this.#appState.notifyPointsChanged(updated);
+          }
+        } catch {
+          getPointComponent().shake();
+        }
+      },
+    };
+  }
+
+  getPointData(point) {
+    return {
+      point: point.data,
+      offers: this.#pointsModel.getOffersById(point.type, point.offers),
+      destination:
+        this.#pointsModel.getDestinationById(point.destination) ?? {},
+    };
+  }
+
+  getFormData(point) {
+    const allOffers = this.#pointsModel.getOffersByType(point.type);
+
+    return {
+      point: point.data,
+      offers: allOffers,
+      checkedOffers: allOffers.filter((offer) =>
+        point.offers.includes(offer.id),
+      ),
+      destinations: this.#pointsModel.destinations,
+      details: this.#pointsModel.getDestinationById(point.destination),
+      mode: this.#getFormMode(point),
+      state: this.#appState.renderState,
+    };
+  }
+
   #getFormMode(point) {
     const isUpdateMode = this.#pointsModel.hasPoint(point);
-    return isUpdateMode ? FormModes.Update : FormModes.Create;
+    return isUpdateMode ? FormModes.UPDATE : FormModes.CREATE;
   }
 
   #setState(formComponent, state) {
@@ -33,12 +78,12 @@ export default class PointService {
     let isDeleting = false;
     let isSaving = false;
 
-    if (state === EntityStates.isDeleting) {
+    if (state === EntityStates.DELETING) {
       isDisabled = true;
       isDeleting = true;
     }
 
-    if (state === EntityStates.isSaving) {
+    if (state === EntityStates.SAVING) {
       isDisabled = true;
       isSaving = true;
     }
@@ -85,13 +130,13 @@ export default class PointService {
     const createCallbacks = {
       onFormSubmit: async (formData) => {
         this.#uiBlocker.block();
-        this.#setState(getFormComponent(), EntityStates.isSaving);
+        this.#setState(getFormComponent(), EntityStates.SAVING);
         try {
           await this.#pointsModel.addPoint(formData.point);
           this.#appState.notifyPointsChanged();
           callbacks?.closeForm();
         } catch {
-          this.#setState(getFormComponent(), EntityStates.isReady);
+          this.#setState(getFormComponent(), EntityStates.READY);
           getFormComponent().shake();
         } finally {
           this.#uiBlocker.unblock();
@@ -105,13 +150,13 @@ export default class PointService {
     const updateCallbacks = {
       onFormSubmit: async () => {
         this.#uiBlocker.block();
-        this.#setState(getFormComponent(), EntityStates.isSaving);
+        this.#setState(getFormComponent(), EntityStates.SAVING);
         try {
           await this.#pointsModel.updatePoint(point);
           this.#appState.notifyPointsChanged();
           callbacks?.closeForm();
         } catch {
-          this.#setState(getFormComponent(), EntityStates.isReady);
+          this.#setState(getFormComponent(), EntityStates.READY);
           getFormComponent().shake();
         } finally {
           this.#uiBlocker.unblock();
@@ -119,14 +164,14 @@ export default class PointService {
       },
       onFormDecline: async (id) => {
         this.#uiBlocker.block();
-        this.#setState(getFormComponent(), EntityStates.isDeleting);
+        this.#setState(getFormComponent(), EntityStates.DELETING);
         try {
           await this.#pointsModel.removePoint(id);
           this.#appState.notifyPointsChanged();
           this.#appState.currentOpenFormId = null;
           callbacks?.closeForm();
         } catch {
-          this.#setState(getFormComponent(), EntityStates.isReady);
+          this.#setState(getFormComponent(), EntityStates.READY);
           getFormComponent().shake();
         } finally {
           this.#uiBlocker.unblock();
@@ -137,55 +182,10 @@ export default class PointService {
       },
     };
 
-    if (mode === FormModes.Update) {
+    if (mode === FormModes.UPDATE) {
       return { ...baseCallBacks, ...updateCallbacks };
     }
 
     return { ...baseCallBacks, ...createCallbacks };
-  }
-
-  getPointCallbacks({ point, getPointComponent, onEditClick }) {
-    return {
-      onEditClick,
-      onFavoriteClick: async () => {
-        try {
-          const updated = await this.#pointsModel.toggleFavorite(point);
-          if (updated) {
-            this.#appState.notifyPointsChanged(updated);
-          }
-        } catch {
-          getPointComponent().shake();
-        }
-      },
-    };
-  }
-
-  getPointData(point) {
-    return {
-      point: point.data,
-      offers: this.#pointsModel.getOffersById(point.type, point.offers),
-      destination:
-        this.#pointsModel.getDestinationById(point.destination) ?? {},
-    };
-  }
-
-  getFormData(point) {
-    const allOffers = this.#pointsModel.getOffersByType(point.type);
-
-    return {
-      point: point.data,
-      offers: allOffers,
-      checkedOffers: allOffers.filter((offer) =>
-        point.offers.includes(offer.id),
-      ),
-      destinations: this.#pointsModel.destinations,
-      details: this.#pointsModel.getDestinationById(point.destination),
-      mode: this.#getFormMode(point),
-      state: this.#appState.renderState,
-    };
-  }
-
-  getDestinationIdByName(name) {
-    return this.#pointsModel.getDestinationIdByName(name);
   }
 }

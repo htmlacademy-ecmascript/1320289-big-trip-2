@@ -16,10 +16,6 @@ export default class PointsModel {
     this.#appState = appState;
   }
 
-  init() {
-    this.#setData();
-  }
-
   get points() {
     return getArrayFromMap(this.#points);
   }
@@ -38,6 +34,10 @@ export default class PointsModel {
 
   get destinations() {
     return getArrayFromMap(this.#destinationsById);
+  }
+
+  init() {
+    this.#setData();
   }
 
   setFilterPredicate(predicate) {
@@ -147,9 +147,9 @@ export default class PointsModel {
       await this.#setOffers();
       await this.#setPoints();
     } catch {
-      this.#appState.renderState = AppStates.IsError;
+      this.#appState.renderState = AppStates.ERROR;
       return;
     }
-    this.#appState.renderState = AppStates.IsReady;
+    this.#appState.renderState = AppStates.READY;
   }
 }

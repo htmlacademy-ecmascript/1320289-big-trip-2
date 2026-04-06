@@ -51,6 +51,14 @@ export default class PointPresenter {
     remove(this.#formComponent);
   }
 
+  resetView() {
+    this.#closeForm();
+  }
+
+  getPointComponent() {
+    return this.#pointComponent;
+  }
+
   #createComponents() {
     const pointData = this.#pointService.getPointData(this.#point);
 
@@ -98,13 +106,5 @@ export default class PointPresenter {
     replace(this.#pointComponent, this.#formComponent);
     this.#keyboardManager.removeEscHandler(this.#pointComponent.id);
     this.#isOpenForm = false;
-  }
-
-  resetView() {
-    this.#closeForm();
-  }
-
-  getPointComponent() {
-    return this.#pointComponent;
   }
 }

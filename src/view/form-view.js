@@ -44,6 +44,10 @@ export default class FormView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  get template() {
+    return getContentTemplate(this._state);
+  }
+
   _restoreHandlers() {
     this.element
       .querySelector('.event__save-btn')
@@ -76,10 +80,6 @@ export default class FormView extends AbstractStatefulView {
     this.#setFlatpickr();
   }
 
-  get template() {
-    return getContentTemplate(this._state);
-  }
-
   removeElement() {
     super.removeElement();
 
@@ -94,6 +94,41 @@ export default class FormView extends AbstractStatefulView {
     this._setState(state);
   }
 
+  #setFlatpickr() {
+    this.#flatpickrStart = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        // prettier-ignore
+        'time_24hr': true,
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.point.dateFrom,
+        onClose: (date) => this.#changeDateHandler(DateTypes.FROM, date),
+      },
+    );
+
+    this.#flatpickrEnd = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        // prettier-ignore
+        'time_24hr': true,
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.point.dateTo,
+        minDate: this._state.point.dateFrom,
+        onClose: (date) => this.#changeDateHandler(DateTypes.TO, date),
+      },
+    );
+  }
+
+  #parseDataToState(point) {
+    return { ...point };
+  }
+
+  #parseStateToData(state) {
+    return { point: state.point };
+  }
+
   #submitFormHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(this.#parseStateToData(this._state));
@@ -102,7 +137,7 @@ export default class FormView extends AbstractStatefulView {
   #declineFormHandler = (evt) => {
     evt.preventDefault();
 
-    if (this._state.mode === FormModes.Update) {
+    if (this._state.mode === FormModes.UPDATE) {
       this.#handleFormDecline(this._state.point);
     } else {
       this.#handleFormDecline();
@@ -134,7 +169,7 @@ export default class FormView extends AbstractStatefulView {
   };
 
   #changeDateHandler = (dateType, [date]) => {
-    if (dateType === DateTypes.dateFrom) {
+    if (dateType === DateTypes.FROM) {
       this.#flatpickrEnd.set('minDate', date);
 
       if (date > new Date(this._state.point.dateTo)) {
@@ -148,39 +183,4 @@ export default class FormView extends AbstractStatefulView {
   #changePriceHandler = (evt) => {
     this.#handlePriceChange(Number(evt.target.value));
   };
-
-  #setFlatpickr() {
-    this.#flatpickrStart = flatpickr(
-      this.element.querySelector('#event-start-time-1'),
-      {
-        // prettier-ignore
-        'time_24hr': true,
-        enableTime: true,
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.point.dateFrom,
-        onClose: (date) => this.#changeDateHandler(DateTypes.dateFrom, date),
-      },
-    );
-
-    this.#flatpickrEnd = flatpickr(
-      this.element.querySelector('#event-end-time-1'),
-      {
-        // prettier-ignore
-        'time_24hr': true,
-        enableTime: true,
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.point.dateTo,
-        minDate: this._state.point.dateFrom,
-        onClose: (date) => this.#changeDateHandler(DateTypes.dateTo, date),
-      },
-    );
-  }
-
-  #parseDataToState(point) {
-    return { ...point };
-  }
-
-  #parseStateToData(state) {
-    return { point: state.point };
-  }
 }

@@ -48,40 +48,41 @@ export default class ContentPresenter {
     this.#handleStateChange(this.#appState.state);
   }
 
-  #handleStateChange(state, updateType, restData) {
-    if (updateType === UpdateTypes.SinglePointUpdate) {
-      const { pointId } = restData;
-      this.#updatePoint(pointId);
-      return;
+  openAddForm() {
+    this.#appState.resetFilterAndSort();
+
+    if (this.#appState.currentOpenFormId) {
+      this.#pointComponents.get(this.#appState.currentOpenFormId)?.resetView();
+      this.#appState.currentOpenFormId = null;
     }
 
-    this.#clearPoints();
-    this.#contentNode.innerHTML = '';
+    if (!this.#contentNode.contains(this.#listElement)) {
+      this.#contentNode.innerHTML = '';
+      render(this.#list, this.#contentNode);
+    }
 
-    const filtered = this.#filterSortService.getFilteredPoints(
-      this.#pointsModel.points,
-      state.currentFilter,
-    );
+    this.#addPointPresenter?.resetView();
 
-    this.#renderContent(filtered, state);
+    this.#addPointPresenter = new AddPointPresenter({
+      container: this.#listElement,
+      pointService: this.#pointService,
+      pointsModel: this.#pointsModel,
+      keyboardManager: this.#keyboardManager,
+    });
+
+    this.#addPointPresenter.init();
   }
 
   #renderContent(points, state) {
     const { renderState } = state;
 
-    if (
-      renderState === AppStates.IsLoading ||
-      renderState === AppStates.IsError
-    ) {
+    if (renderState === AppStates.LOADING || renderState === AppStates.ERROR) {
       const message = AppStateHints[renderState];
       this.#renderHint(message, this.#contentNode);
       return;
     }
 
-    if (
-      points.length === 0 &&
-      this.#appState.renderState === AppStates.IsReady
-    ) {
+    if (points.length === 0 && this.#appState.renderState === AppStates.READY) {
       this.#renderEmptyListHint();
       return;
     }
@@ -152,39 +153,6 @@ export default class ContentPresenter {
     );
   }
 
-  #handleSortTypeChange(sortType) {
-    if (sortType === this.#appState.currentSort) {
-      return;
-    }
-
-    this.#appState.currentSort = sortType;
-  }
-
-  openAddForm() {
-    this.#appState.resetFilterAndSort();
-
-    if (this.#appState.currentOpenFormId) {
-      this.#pointComponents.get(this.#appState.currentOpenFormId)?.resetView();
-      this.#appState.currentOpenFormId = null;
-    }
-
-    if (!this.#contentNode.contains(this.#listElement)) {
-      this.#contentNode.innerHTML = '';
-      render(this.#list, this.#contentNode);
-    }
-
-    this.#addPointPresenter?.resetView();
-
-    this.#addPointPresenter = new AddPointPresenter({
-      container: this.#listElement,
-      pointService: this.#pointService,
-      pointsModel: this.#pointsModel,
-      keyboardManager: this.#keyboardManager,
-    });
-
-    this.#addPointPresenter.init();
-  }
-
   #renderHint(message, container) {
     container.innerHTML = '';
     render(new HintView({ message }), container);
@@ -193,5 +161,31 @@ export default class ContentPresenter {
   #renderEmptyListHint() {
     const message = FilterEmptyHints[this.#appState.currentFilter];
     this.#renderHint(message, this.#contentNode);
+  }
+
+  #handleStateChange(state, updateType, restData) {
+    if (updateType === UpdateTypes.MINOR) {
+      const { pointId } = restData;
+      this.#updatePoint(pointId);
+      return;
+    }
+
+    this.#clearPoints();
+    this.#contentNode.innerHTML = '';
+
+    const filtered = this.#filterSortService.getFilteredPoints(
+      this.#pointsModel.points,
+      state.currentFilter,
+    );
+
+    this.#renderContent(filtered, state);
+  }
+
+  #handleSortTypeChange(sortType) {
+    if (sortType === this.#appState.currentSort) {
+      return;
+    }
+
+    this.#appState.currentSort = sortType;
   }
 }

@@ -172,7 +172,7 @@ const getContentTemplate = (formData) => {
     isSaving,
     isDeleting,
   } = formData;
-  const isUpdateMode = mode === FormModes.Update;
+  const isUpdateMode = mode === FormModes.UPDATE;
 
   return `
     <li class="trip-events__item">
