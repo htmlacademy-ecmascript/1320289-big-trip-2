@@ -67,7 +67,7 @@ export default class FormView extends AbstractStatefulView {
 
     this.element
       .querySelector('#event-price-1')
-      .addEventListener('change', this.#changePriceHandler);
+      .addEventListener('input', this.#changePriceHandler);
 
     this.element
       .querySelector('.event__rollup-btn')
@@ -88,6 +88,10 @@ export default class FormView extends AbstractStatefulView {
 
     this.#flatpickrEnd?.destroy();
     this.#flatpickrEnd = null;
+  }
+
+  patchState(state) {
+    this._setState(state);
   }
 
   #submitFormHandler = (evt) => {
@@ -149,6 +153,8 @@ export default class FormView extends AbstractStatefulView {
     this.#flatpickrStart = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
+        // prettier-ignore
+        'time_24hr': true,
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.point.dateFrom,
@@ -159,6 +165,8 @@ export default class FormView extends AbstractStatefulView {
     this.#flatpickrEnd = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
+        // prettier-ignore
+        'time_24hr': true,
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.point.dateTo,
@@ -173,9 +181,6 @@ export default class FormView extends AbstractStatefulView {
   }
 
   #parseStateToData(state) {
-    const data = { ...state };
-    delete data.mode;
-
-    return data;
+    return { point: state.point };
   }
 }
