@@ -1,27 +1,17 @@
 import { getDateInFormat } from '../common/date';
-import { FilterPredicates } from '../common/sort';
 import { TimeFormates } from '../common/time';
 
 export default class InfoService {
   #pointsModel = null;
-  #appState = null;
 
-  constructor({ pointsModel, appState }) {
+  constructor({ pointsModel }) {
     this.#pointsModel = pointsModel;
-    this.#appState = appState;
-  }
-
-  get #filteredPoints() {
-    const predicate = FilterPredicates[this.#appState.currentFilter];
-    return predicate
-      ? this.#pointsModel.points.filter(predicate)
-      : this.#pointsModel.points;
   }
 
   getDestinations() {
     const names = [
       ...new Set(
-        this.#filteredPoints.map(
+        this.#pointsModel.points.map(
           ({ destination }) =>
             this.#pointsModel.getDestinationById(destination)?.name ??
             'Unknown',
@@ -37,7 +27,7 @@ export default class InfoService {
   }
 
   getDates() {
-    const dates = this.#filteredPoints.map((point) => point.dateFrom);
+    const dates = this.#pointsModel.points.map((point) => point.dateFrom);
 
     const minDate = dates.reduce((min, date) => (date < min ? date : min));
     const maxDate = dates.reduce((max, date) => (date > max ? date : max));
@@ -56,7 +46,7 @@ export default class InfoService {
   }
 
   getPrice() {
-    const pointsPrice = this.#filteredPoints.reduce(
+    const pointsPrice = this.#pointsModel.points.reduce(
       (total, point) => total + point.basePrice,
       0,
     );

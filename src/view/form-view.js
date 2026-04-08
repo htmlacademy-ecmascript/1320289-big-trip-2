@@ -102,7 +102,7 @@ export default class FormView extends AbstractStatefulView {
         'time_24hr': true,
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.point.dateFrom,
+        defaultDate: this._state.point.dateFrom || null,
         onClose: (date) => this.#changeDateHandler(DateTypes.FROM, date),
       },
     );
@@ -114,8 +114,8 @@ export default class FormView extends AbstractStatefulView {
         'time_24hr': true,
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.point.dateTo,
-        minDate: this._state.point.dateFrom,
+        defaultDate: this._state.point.dateTo || null,
+        minDate: this._state.point.dateFrom || null,
         onClose: (date) => this.#changeDateHandler(DateTypes.TO, date),
       },
     );
@@ -131,6 +131,18 @@ export default class FormView extends AbstractStatefulView {
 
   #submitFormHandler = (evt) => {
     evt.preventDefault();
+    const form = this.element.querySelector('.event--edit');
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    if (!this._state.point.dateFrom || !this._state.point.dateTo) {
+      this.shake();
+      return;
+    }
+
     this.#handleFormSubmit(this.#parseStateToData(this._state));
   };
 
@@ -177,7 +189,7 @@ export default class FormView extends AbstractStatefulView {
       }
     }
 
-    this.#handleDateChange(dateType, date.toISOString());
+    this.#handleDateChange(dateType, date?.toISOString());
   };
 
   #changePriceHandler = (evt) => {

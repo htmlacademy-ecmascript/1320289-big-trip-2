@@ -9,14 +9,17 @@ export default class AddPointPresenter {
 
   #formComponent = null;
   #point = null;
+  #callbacks = null;
 
   constructor(data) {
-    const { container, pointService, pointsModel, keyboardManager } = data;
+    const { container, pointService, pointsModel, keyboardManager, callbacks } =
+      data;
 
     this.#container = container;
     this.#pointService = pointService;
     this.#pointsModel = pointsModel;
     this.#keyboardManager = keyboardManager;
+    this.#callbacks = callbacks;
   }
 
   init() {
@@ -29,20 +32,20 @@ export default class AddPointPresenter {
         point: this.#point,
         getFormComponent: () => this.#formComponent,
         callbacks: {
-          closeForm: () => this.#closeForm(),
+          close: () => this.#close(),
         },
       }),
     });
 
     render(this.#formComponent, this.#container, RenderPosition.AFTERBEGIN);
-    this.#keyboardManager.addEscHandler('new-point', () => this.#closeForm());
+    this.#keyboardManager.addEscHandler('new-point', () => this.#close());
   }
 
   resetView() {
-    this.#closeForm();
+    this.#close();
   }
 
-  #closeForm() {
+  #close() {
     if (!this.#formComponent) {
       return;
     }
@@ -50,5 +53,6 @@ export default class AddPointPresenter {
     remove(this.#formComponent);
     this.#formComponent = null;
     this.#keyboardManager.removeEscHandler('new-point');
+    this.#callbacks.onClose?.();
   }
 }

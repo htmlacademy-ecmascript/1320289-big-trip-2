@@ -35,7 +35,7 @@ pointsModel.init();
 
 const pointService = new PointService({ pointsModel, appState, uiBlocker });
 const filterSortService = new FilterSortService({ pointsModel, appState });
-const infoService = new InfoService({ pointsModel, appState });
+const infoService = new InfoService({ pointsModel });
 
 const contentPresenter = new ContentPresenter({
   contentNode: eventsNode,

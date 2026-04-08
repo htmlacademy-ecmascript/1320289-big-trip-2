@@ -1,4 +1,4 @@
-import { FormModes, EntityStates } from '../common/config';
+import { FormModes, EntityStates, AppStates } from '../common/config';
 import { getEncodedData } from '../common/utils';
 
 export default class PointService {
@@ -131,19 +131,21 @@ export default class PointService {
       onFormSubmit: async (formData) => {
         this.#uiBlocker.block();
         this.#setState(getFormComponent(), EntityStates.SAVING);
+        this.#appState.renderState = AppStates.WAITING;
         try {
           await this.#pointsModel.addPoint(formData.point);
           this.#appState.notifyPointsChanged();
-          callbacks?.closeForm();
+          callbacks?.close();
         } catch {
           this.#setState(getFormComponent(), EntityStates.READY);
           getFormComponent().shake();
         } finally {
+          this.#appState.renderState = AppStates.READY;
           this.#uiBlocker.unblock();
         }
       },
       onFormDecline: () => {
-        callbacks?.closeForm();
+        callbacks?.close();
       },
     };
 
@@ -154,7 +156,7 @@ export default class PointService {
         try {
           await this.#pointsModel.updatePoint(point);
           this.#appState.notifyPointsChanged();
-          callbacks?.closeForm();
+          callbacks?.close();
         } catch {
           this.#setState(getFormComponent(), EntityStates.READY);
           getFormComponent().shake();
@@ -169,7 +171,7 @@ export default class PointService {
           await this.#pointsModel.removePoint(id);
           this.#appState.notifyPointsChanged();
           this.#appState.currentOpenFormId = null;
-          callbacks?.closeForm();
+          callbacks?.close();
         } catch {
           this.#setState(getFormComponent(), EntityStates.READY);
           getFormComponent().shake();
@@ -178,7 +180,7 @@ export default class PointService {
         }
       },
       onFormClose: () => {
-        callbacks?.closeForm();
+        callbacks?.close();
       },
     };
 

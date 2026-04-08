@@ -68,6 +68,13 @@ export default class ContentPresenter {
       pointService: this.#pointService,
       pointsModel: this.#pointsModel,
       keyboardManager: this.#keyboardManager,
+      callbacks: {
+        onClose: () => {
+          if (this.#pointsModel.points.length === 0) {
+            this.#renderEmptyListHint();
+          }
+        },
+      },
     });
 
     this.#addPointPresenter.init();

@@ -8,8 +8,8 @@ const getEventTypeTemplate = (pointType, type, isDisabled) => {
 
   return `
     <div class="event__type-item">
-      <input id="${pointType}" class="event__type-input visually-hidden" type="radio" name="event-type" value="${pointType}" ${isChecked} ${isDisabled ? 'disabled' : ''}>
-      <label class="event__type-label  event__type-label--${pointType}" for="${pointType}">${pointType.charAt(0).toUpperCase() + pointType.slice(1)}</label>
+      <input id="event-type-${pointType}" class="event__type-input visually-hidden" type="radio" name="event-type" value="${pointType}" ${isChecked} ${isDisabled ? 'disabled' : ''}>
+      <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}">${pointType.charAt(0).toUpperCase() + pointType.slice(1)}</label>
     </div>`;
 };
 
@@ -100,20 +100,22 @@ const getPictureTemplate = ({ src, description }) => `
 `;
 
 const getDestinationInfoTemplate = ({ pictures, description }) => {
-  if (!pictures && !description) {
+  if (!pictures?.length && !description) {
     return '';
   }
 
+  // prettier-ignore
   return `
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${description}</p>
 
-      <div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${pictures?.map((picture) => getPictureTemplate({ src: picture.src, description: picture.description })).join('')}
-        </div>
-      </div>
+      ${pictures.length ? `<div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${pictures?.map((picture) => getPictureTemplate({ src: picture.src, description: picture.description })).join('')}
+          </div>
+        </div>` : ''}
+
     </section>
   `;
 };
@@ -123,10 +125,10 @@ const getTimeTemplate = (point, isDisabled) => {
   return `
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getDateInFormat(dateFrom, TimeFormates.FULL)}"  ${isDisabled ? 'disabled' : ''}>
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" required value="${getDateInFormat(dateFrom, TimeFormates.FULL)}"  ${isDisabled ? 'disabled' : ''}>
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getDateInFormat(dateTo, TimeFormates.FULL)}"  ${isDisabled ? 'disabled' : ''}>
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" required value="${getDateInFormat(dateTo, TimeFormates.FULL)}"  ${isDisabled ? 'disabled' : ''}>
     </div>
   `;
 };
@@ -139,7 +141,7 @@ const getPriceTemplate = (point, isDisabled) => {
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" required id="event-price-1" type="number" name="event-price" value="${basePrice}"  ${isDisabled ? 'disabled' : ''}>
+      <input class="event__input  event__input--price" required id="event-price-1" type="number" name="event-price" min="1" value="${basePrice}"  ${isDisabled ? 'disabled' : ''}>
     </div>
   `;
 };

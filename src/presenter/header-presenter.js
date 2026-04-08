@@ -85,7 +85,8 @@ export default class HeaderPresenter {
 
     if (
       this.#pointsModel.filteredPoints.length === 0 ||
-      renderState !== AppStates.READY
+      renderState === AppStates.ERROR ||
+      renderState === AppStates.LOADING
     ) {
       return;
     }

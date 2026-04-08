@@ -21,6 +21,7 @@ const UpdateTypes = {
 const AppStates = {
   ERROR: 'error',
   LOADING: 'loading',
+  WAITING: 'waiting',
   READY: 'ready',
 };
 
