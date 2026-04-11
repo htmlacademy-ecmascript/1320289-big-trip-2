@@ -51,17 +51,21 @@ export default class PointPresenter {
     remove(this.#formComponent);
   }
 
-  #createComponents() {
-    const pointData = this.#pointService.getPointData(this.#point);
+  resetView() {
+    this.#close();
+  }
 
-    const formData = this.#pointService.getFormData(this.#point);
-    const formCallbacks = this.#pointService.getFormCallbacks({
-      point: this.#point,
-      getFormComponent: () => this.#formComponent,
-      callbacks: {
-        closeForm: () => this.#closeForm(),
-      },
-    });
+  getPointComponent() {
+    return this.#pointComponent;
+  }
+
+  #createComponents() {
+    this.#createPointComponent();
+    this.#createFormComponent();
+  }
+
+  #createPointComponent() {
+    const pointData = this.#pointService.getPointData(this.#point);
 
     this.#pointComponent = new PointView({
       pointData,
@@ -69,8 +73,20 @@ export default class PointPresenter {
         ...this.#callbacks,
         onEditClick: () => {
           this.#callbacks?.onEditClick();
-          this.#openForm();
+          this.#open();
         },
+      },
+    });
+  }
+
+  #createFormComponent() {
+    const formData = this.#pointService.getFormData(this.#point);
+
+    const formCallbacks = this.#pointService.getFormCallbacks({
+      point: this.#point,
+      getFormComponent: () => this.#formComponent,
+      callbacks: {
+        close: () => this.#close(),
       },
     });
 
@@ -80,31 +96,29 @@ export default class PointPresenter {
     });
   }
 
-  #openForm() {
+  #open() {
     replace(this.#formComponent, this.#pointComponent);
 
     this.#keyboardManager.addEscHandler(this.#pointComponent.id, () => {
-      this.#closeForm();
+      this.#close();
     });
 
     this.#isOpenForm = true;
   }
 
-  #closeForm() {
+  #close() {
     if (!this.#isOpenForm) {
       return;
     }
 
-    replace(this.#pointComponent, this.#formComponent);
+    const prevFormComponent = this.#formComponent;
+
+    this.#createFormComponent();
+
+    replace(this.#pointComponent, prevFormComponent);
+    remove(prevFormComponent);
+
     this.#keyboardManager.removeEscHandler(this.#pointComponent.id);
     this.#isOpenForm = false;
-  }
-
-  resetView() {
-    this.#closeForm();
-  }
-
-  getPointComponent() {
-    return this.#pointComponent;
   }
 }

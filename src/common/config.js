@@ -14,35 +14,42 @@ const FilterTypes = {
 };
 
 const UpdateTypes = {
-  FullChange: 'FULL_CHANGE',
-  SinglePointUpdate: 'SINGLE_POINT_UPDATE',
+  MAJOR: 'major',
+  MINOR: 'minor',
 };
 
 const AppStates = {
-  IsError: 'IS_ERROR',
-  IsReady: 'IS_READY',
+  ERROR: 'error',
+  LOADING: 'loading',
+  WAITING: 'waiting',
+  READY: 'ready',
 };
 
 const FormModes = {
-  Update: 'UPDATE',
-  Create: 'CREATE',
+  UPDATE: 'update',
+  CREATE: 'create',
 };
 
 const DateTypes = {
-  dateFrom: 'dateFrom',
-  dateTo: 'dateTo',
+  FROM: 'dateFrom',
+  TO: 'dateTo',
 };
 
 const EntityStates = {
-  isDisabled: 'IS_DISABLED',
-  isSaving: 'IS_SAVING',
-  isDeleting: 'IS_DELETING',
-  isReady: 'IS_READY',
+  DISABLED: 'disabled',
+  SAVING: 'saving',
+  DELETING: 'deleting',
+  READY: 'ready',
 };
 
 const ApiSettings = {
   AUTHORIZATION: 'Basic gq6e9j3erl7TY',
   URL: 'https://22.objects.htmlacademy.pro/big-trip',
+};
+
+const TimeLimits = {
+  LOWER_LIMIT: 0,
+  UPPER_LIMIT: 1000,
 };
 
 export {
@@ -54,4 +61,5 @@ export {
   DateTypes,
   EntityStates,
   ApiSettings,
+  TimeLimits,
 };

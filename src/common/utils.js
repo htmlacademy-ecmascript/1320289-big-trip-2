@@ -1,8 +1,5 @@
 import he from 'he';
 
-const getRandomArrayElement = (array) =>
-  array[Math.floor(Math.random() * array.length)];
-
 const isEscKeyCode = (evt) => evt.key === 'Escape';
 
 const onEscKeydown = (evt, cb) => {
@@ -22,4 +19,4 @@ const getArrayFromMap = (map) => Array.from(map.values());
 
 const getEncodedData = (data) => he.encode(data);
 
-export { getRandomArrayElement, onEscKeydown, getArrayFromMap, getEncodedData };
+export { onEscKeydown, getArrayFromMap, getEncodedData };

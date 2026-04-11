@@ -1,4 +1,12 @@
 export default class AdapterService {
+  adaptToServer(object) {
+    return this.#objectToSnakeCase(object);
+  }
+
+  adaptToClient(object) {
+    return this.#objectToCamelCase(object);
+  }
+
   #toSnakeCase(string) {
     return string.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
   }
@@ -22,13 +30,5 @@ export default class AdapterService {
 
   #objectToCamelCase(object) {
     return this.#convertKeys(object, this.#toCamelCase);
-  }
-
-  adaptToServer(object) {
-    return this.#objectToSnakeCase(object);
-  }
-
-  adaptToClient(object) {
-    return this.#objectToCamelCase(object);
   }
 }

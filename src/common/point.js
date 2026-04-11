@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-
 const PointTypes = {
   TAXI: 'taxi',
   BUS: 'bus',
@@ -14,8 +12,8 @@ const PointTypes = {
 
 const NEW_POINT = {
   basePrice: 0,
-  dateFrom: dayjs().toISOString(),
-  dateTo: dayjs().add(1, 'hour').toISOString(),
+  dateFrom: '',
+  dateTo: '',
   destination: 0,
   isFavorite: false,
   offers: [],

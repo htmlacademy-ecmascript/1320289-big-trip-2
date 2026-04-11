@@ -44,15 +44,6 @@ export default class HeaderPresenter {
     this.#handleStateChange(this.#appState.state);
   }
 
-  #handleStateChange(state) {
-    const predicate = FilterPredicates[state.currentFilter];
-    this.#pointsModel.setFilterPredicate(predicate);
-
-    this.#renderAddButton(state.renderState);
-    this.#renderInfo(state.renderState);
-    this.#filterPresenter?.update();
-  }
-
   #renderFilters() {
     const filtersNode = this.#contentNode.querySelector(
       '.trip-controls__filters',
@@ -72,7 +63,7 @@ export default class HeaderPresenter {
   }
 
   #renderAddButton(renderState) {
-    const isDisabled = renderState !== AppStates.IsReady;
+    const isDisabled = renderState !== AppStates.READY;
 
     remove(this.#addPointComponent);
 
@@ -94,7 +85,8 @@ export default class HeaderPresenter {
 
     if (
       this.#pointsModel.filteredPoints.length === 0 ||
-      renderState !== AppStates.IsReady
+      renderState === AppStates.ERROR ||
+      renderState === AppStates.LOADING
     ) {
       return;
     }
@@ -105,6 +97,15 @@ export default class HeaderPresenter {
     });
 
     this.#infoPresenter.init();
+  }
+
+  #handleStateChange(state) {
+    const predicate = FilterPredicates[state.currentFilter];
+    this.#pointsModel.setFilterPredicate(predicate);
+
+    this.#renderAddButton(state.renderState);
+    this.#renderInfo(state.renderState);
+    this.#filterPresenter?.update();
   }
 
   #handlerFilterTypeChange(filterType) {
