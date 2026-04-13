@@ -11,7 +11,7 @@ const getDiffInTime = (start, end) => {
   const hours = Math.floor((diff % TIME.MIN_IN_DAY) / TIME.MIN_IN_HR);
   const mins = diff % TIME.MIN_IN_HR;
 
-  const pad = (str) => str.toString().padStart(2, '0');
+  const pad = (value) => value.toString().padStart(2, '0');
 
   if (days > 0) {
     return `${pad(days)}D ${pad(hours)}H ${pad(mins)}M`;

@@ -11,16 +11,17 @@ const SortComparators = {
     isDisabled: true,
   },
   [SortTypes.TIME]: {
-    comparator: (a, b) =>
-      dayjs(b.dateTo).diff(b.dateFrom) - dayjs(a.dateTo).diff(a.dateFrom),
+    comparator: (pointA, pointB) =>
+      dayjs(pointB.dateTo).diff(pointB.dateFrom) -
+      dayjs(pointA.dateTo).diff(pointA.dateFrom),
     isDisabled: false,
   },
   [SortTypes.PRICE]: {
-    comparator: (a, b) => b.basePrice - a.basePrice,
+    comparator: (pointA, pointB) => pointB.basePrice - pointA.basePrice,
     isDisabled: false,
   },
   [SortTypes.OFFERS]: {
-    comparator: (a, b) => b.offers.length - a.offers.length,
+    comparator: (pointA, pointB) => pointB.offers.length - pointA.offers.length,
     isDisabled: false,
   },
 };
